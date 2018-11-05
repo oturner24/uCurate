@@ -1,4 +1,4 @@
-package com.example.oliviaturner.ucurate;
+package com.cmsc436.ucurate;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
