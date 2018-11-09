@@ -1,25 +1,21 @@
 package com.cmsc436.ucurate;
 
-import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DropPins extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private String title;
-    private double lng;
-    private double lat;
-    private ImageView imageView;
+    private Stop stop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,21 +26,24 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        title = getIntent().getStringExtra("title"); //TODO represent as Stop Object
-        lng = getIntent().getDoubleExtra("lng", 0);
-        lat = getIntent().getDoubleExtra("lat", 0);
-        Bitmap bitmap = getIntent().getParcelableExtra("photo");
-        //imageView = findViewById(R.id.image);
-        //imageView.setImageBitmap(bitmap);
+        //retrieve the stop object passed by add pin
+        stop = (Stop) getIntent().getParcelableExtra("stop");
+
+        //populate screen with stop info
+        ((TextView) findViewById(R.id.drop_title)).setText(stop.getTitle());
+        ((TextView) findViewById(R.id.drop_des)).setText(stop.getDescription());
+        ((ImageView) findViewById(R.id.drop_img)).setImageBitmap(stop.getImage());
+
+        //TODO on click done, insert into database and return to home page
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng loc = new LatLng(lat, lng);
-        mMap.addMarker(new MarkerOptions().position(loc).title(title));
+        //set marker at current location
+        LatLng loc = stop.getCoordinate();
+        mMap.addMarker(new MarkerOptions().position(loc).title(stop.getTitle()));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
         // Zoom in, animating the camera.
         mMap.animateCamera(CameraUpdateFactory.zoomIn());
