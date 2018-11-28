@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -58,11 +59,15 @@ public class AddPin extends AppCompatActivity {
             public void onClick(View v) {
                 String title = ((EditText) findViewById(R.id.title)).getText().toString();
                 String description = ((EditText) findViewById(R.id.des)).getText().toString();
-                stop.setTitle(title);
-                stop.setDescription(description);
-                Intent dropIntent = new Intent(getApplicationContext(), DropPins.class);
-                dropIntent.putExtra("stop", stop);
-                startActivity(dropIntent);
+                if (title.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Must enter a title.", Toast.LENGTH_LONG).show();
+                } else {
+                    stop.setTitle(title);
+                    stop.setDescription(description);
+                    Intent dropIntent = new Intent(getApplicationContext(), DropPins.class);
+                    dropIntent.putExtra("stop", stop);
+                    startActivity(dropIntent);
+                }
             }
         });
     }
@@ -81,7 +86,7 @@ public class AddPin extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 1) {
             for (int i = 0; i < permissions.length; i++) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED && permissions[i] == Manifest.permission.ACCESS_FINE_LOCATION) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED && permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     getLastLoc();
                 }
             }
