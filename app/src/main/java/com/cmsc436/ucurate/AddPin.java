@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -73,11 +75,24 @@ public class AddPin extends AppCompatActivity {
             public void onClick(View v) {
                 String title = ((EditText) findViewById(R.id.title)).getText().toString();
                 String description = ((EditText) findViewById(R.id.des)).getText().toString();
+                String address = ((EditText) findViewById(R.id.address)).getText().toString();
                 if (title.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Must enter a title.", Toast.LENGTH_LONG).show();
                 } else {
                     stop.setTitle(title);
                     stop.setDescription(description);
+                    if (!address.isEmpty()) {
+                        Geocoder geocoder = new Geocoder(getApplicationContext());
+                        try {
+                            Address a = geocoder.getFromLocationName(address, 1).get(0);
+
+                            LatLng latLng = new LatLng(a.getLatitude(), a.getLongitude());
+                            stop.setCoordinate(latLng);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     Intent dropIntent = new Intent(getApplicationContext(), DropPins.class);
                     dropIntent.putExtra("stop", stop);
                     startActivity(dropIntent);

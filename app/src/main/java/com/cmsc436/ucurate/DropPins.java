@@ -1,6 +1,5 @@
 package com.cmsc436.ucurate;
 
-import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -29,7 +28,7 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
         //retrieve the stop object passed by add pin
-        stop = (Stop) getIntent().getParcelableExtra("stop");
+        stop = getIntent().getParcelableExtra("stop");
 
         //populate screen with stop info
         ((TextView) findViewById(R.id.drop_title)).setText(stop.getTitle());
