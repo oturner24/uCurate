@@ -1,5 +1,6 @@
 package com.cmsc436.ucurate;
 
+import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
