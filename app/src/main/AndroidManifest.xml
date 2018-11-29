@@ -38,12 +38,14 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            </intent-filter></activity>
         <activity android:name=".DropPins" />
         <activity android:name=".TourListActivity" />
         <activity android:name=".TourInfoActivity" />
-        <activity android:name=".TourActivity"></activity>
+        <activity
+            android:name=".CreateTour"
+            android:label="@string/title_activity_create_tour">
+        </activity>
     </application>
 
 </manifest>

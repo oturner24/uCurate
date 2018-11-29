@@ -4,7 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,14 +16,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.IOException;
+
 public class AddPin extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int GET_FROM_GALLERY = 2;
 
     private ImageView imageView;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -32,6 +40,8 @@ public class AddPin extends AppCompatActivity {
         setContentView(R.layout.activity_add_pin);
 
         imageView = findViewById(R.id.imageView);
+        Button upload = findViewById(R.id.upload_photo_button);
+        Button takePhoto = findViewById(R.id.take_photo_button);
         stop = new Stop();
 
         //ask for location permissions if necessary
@@ -43,11 +53,18 @@ public class AddPin extends AppCompatActivity {
         }
 
         //open camera and get bitmap result
-        imageView.setOnClickListener(new View.OnClickListener() {
+        takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent cameraIntent = new Intent("android.media.action.IMAGE_CAPTURE");
                 startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        });
+
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
             }
         });
 
@@ -58,11 +75,28 @@ public class AddPin extends AppCompatActivity {
             public void onClick(View v) {
                 String title = ((EditText) findViewById(R.id.title)).getText().toString();
                 String description = ((EditText) findViewById(R.id.des)).getText().toString();
-                stop.setTitle(title);
-                stop.setDescription(description);
-                Intent dropIntent = new Intent(getApplicationContext(), DropPins.class);
-                dropIntent.putExtra("stop", stop);
-                startActivity(dropIntent);
+                String address = ((EditText) findViewById(R.id.address)).getText().toString();
+                if (title.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Must enter a title.", Toast.LENGTH_LONG).show();
+                } else {
+                    stop.setTitle(title);
+                    stop.setDescription(description);
+                    if (!address.isEmpty()) {
+                        Geocoder geocoder = new Geocoder(getApplicationContext());
+                        try {
+                            Address a = geocoder.getFromLocationName(address, 1).get(0);
+
+                            LatLng latLng = new LatLng(a.getLatitude(), a.getLongitude());
+                            stop.setCoordinate(latLng);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Intent dropIntent = new Intent(getApplicationContext(), DropPins.class);
+                    dropIntent.putExtra("stop", stop);
+                    startActivity(dropIntent);
+                }
             }
         });
     }
@@ -74,6 +108,15 @@ public class AddPin extends AppCompatActivity {
             Bitmap bitmap = (Bitmap) extras.get("data");
             stop.setImage(bitmap);
             imageView.setImageBitmap(bitmap);
+        } else if (requestCode == GET_FROM_GALLERY && resultCode == RESULT_OK) {
+            Uri selectedImage = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                stop.setImage(scaleDownBitmap(bitmap));
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -81,7 +124,7 @@ public class AddPin extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 1) {
             for (int i = 0; i < permissions.length; i++) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED && permissions[i] == Manifest.permission.ACCESS_FINE_LOCATION) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED && permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
                     getLastLoc();
                 }
             }
@@ -102,5 +145,16 @@ public class AddPin extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public Bitmap scaleDownBitmap(Bitmap photo) {
+        float densityMultiplier = getResources().getDisplayMetrics().density;
+
+        int h = (int) (50 * densityMultiplier);
+        int w = (int) (h * photo.getWidth()/((double) photo.getHeight()));
+
+        photo = Bitmap.createScaledBitmap(photo, w, h, true);
+
+        return photo;
     }
 }
