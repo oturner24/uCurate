@@ -10,6 +10,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class DropPins extends FragmentActivity implements OnMapReadyCallback {
@@ -27,7 +28,7 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
         //retrieve the stop object passed by add pin
-        stop = (Stop) getIntent().getParcelableExtra("stop");
+        stop = getIntent().getParcelableExtra("stop");
 
         //populate screen with stop info
         ((TextView) findViewById(R.id.drop_title)).setText(stop.getTitle());
@@ -43,7 +44,23 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
 
         //set marker at current location
         LatLng loc = stop.getCoordinate();
-        mMap.addMarker(new MarkerOptions().position(loc).title(stop.getTitle()));
+        mMap.addMarker(new MarkerOptions().position(loc).title(stop.getTitle())).setDraggable(true);
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                //do nothing
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                //do nothing
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                stop.setCoordinate(marker.getPosition());
+            }
+        });
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
         // Zoom in, animating the camera.
         mMap.animateCamera(CameraUpdateFactory.zoomIn());
