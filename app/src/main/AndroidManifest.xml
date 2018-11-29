@@ -42,7 +42,8 @@
         </activity>
         <activity android:name=".DropPins" />
         <activity android:name=".TourListActivity" />
-        <activity android:name=".TourInfoActivity"></activity>
+        <activity android:name=".TourInfoActivity" />
+        <activity android:name=".TourActivity"></activity>
     </application>
 
 </manifest>
