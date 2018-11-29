@@ -45,8 +45,7 @@ public class MainActivity extends Activity implements OnMapReadyCallback {
         launchProfile.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                //will not be tourlistactivity, will make new, other class for it.
-                Intent intent3 = new Intent(MainActivity.this, TourListActivity.class);
+                Intent intent3 = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent3);
 
             }
