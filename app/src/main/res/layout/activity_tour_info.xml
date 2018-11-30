@@ -10,43 +10,56 @@
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/map"
         class="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="221dp" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="3dp"
+        app:layout_constraintBottom_toTopOf="@+id/tour_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/tour_name"
-        android:layout_width="123dp"
-        android:layout_height="36dp"
-        android:layout_marginBottom="63dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"
+        android:layout_marginStart="48dp"
+        android:gravity="center"
         android:text="@string/tour"
         android:textSize="32sp"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/distance"
+        app:layout_constraintBottom_toTopOf="@+id/description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
+        android:layout_marginBottom="19dp"
         android:text="@string/start_tour"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/num_stops" />
 
     <TextView
         android:id="@+id/description"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/description"
+        android:layout_marginEnd="55dp"
+        android:layout_marginLeft="55dp"
+        android:layout_marginRight="55dp"
+        android:layout_marginStart="55dp"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/distance"
+        android:text="@string/description"
+        app:layout_constraintBottom_toTopOf="@+id/num_stops"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tour_name" />
 
@@ -54,22 +67,25 @@
         android:id="@+id/num_stops"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="42dp"
-        android:layout_marginStart="42dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginBottom="171dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="21dp"
+        android:layout_marginStart="2dp"
         android:text="@string/num_stops"
-        app:layout_constraintStart_toStartOf="@+id/description"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toStartOf="@+id/distance"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description" />
 
     <TextView
         android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="173dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginTop="5dp"
         android:text="@string/distance"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/description" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/num_stops"
+        app:layout_constraintTop_toBottomOf="@+id/description" />
 
 </android.support.constraint.ConstraintLayout>
