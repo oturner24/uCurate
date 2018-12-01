@@ -17,6 +17,7 @@ public class TourListActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Button mButton;
+    private String[] myDataset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class TourListActivity extends AppCompatActivity {
 
         // specify an adapter (see also next example)
         // Will need to get tour names from database
-        String[] myDataset = {"Street Art", "Abstract Art", "Sculpture", "Testudos", "Multicultural", "Kids Tour", "Hidden Gems", "Student Work"};
+        myDataset = new String[]{"Street Art", "Abstract Art", "Sculpture", "Testudos", "Multicultural", "Kids Tour", "Hidden Gems", "Student Work"};
         mAdapter = new TourListAdapter(myDataset);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -58,7 +59,15 @@ public class TourListActivity extends AppCompatActivity {
     private void doMySearch(String query) {
         //do the search
 
-        String[] newDataSet = {"Street Art", "Sculpture", "Testudos", "Multicultural"};
+        String[] newDataSet = new String[myDataset.length];
+        int j = 0;
+
+        for(int i = 0; i < newDataSet.length; i++){
+            if(myDataset[i].toLowerCase().contains(query.toLowerCase())){
+                newDataSet[j] = myDataset[i];
+                j++;
+            }
+        }
 
         mAdapter = new TourListAdapter(newDataSet);
         mRecyclerView.setAdapter(mAdapter);
