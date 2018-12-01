@@ -7,4 +7,5 @@
     <string name="num_stops">5 stops</string>
     <string name="distance">2.5 miles</string>
     <string name="title_activity_create_tour">CreateTour</string>
+    <string name="search_hint">Search Tours</string>
 </resources>
