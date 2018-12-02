@@ -60,6 +60,7 @@ public class CreateTour extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 String name = ((TextView) findViewById(R.id.tour_name)).getText().toString().trim();
+                String description = ((TextView) findViewById(R.id.tour_des)).getText().toString().trim();
                 ArrayList<Stop> selected = mAdapter.getSelected();
                 if (name.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Must enter a title.", Toast.LENGTH_LONG).show();
