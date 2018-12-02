@@ -43,7 +43,6 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
         String tourTitle = mTour.getTitle();
         String description = mTour.getDescription();
         int num_stops = mTour.getNumStops();
-        Double distance = mTour.getDistance();
 
 
         TextView title = findViewById(R.id.tour_name);
@@ -54,9 +53,6 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
 
         TextView num = findViewById(R.id.num_stops);
         num.setText("" + num_stops);
-
-        TextView dist = findViewById(R.id.distance);
-        dist.setText("" + distance);
 
         Button mButton = findViewById(R.id.button);
 
