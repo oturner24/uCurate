@@ -1,6 +1,7 @@
 package com.cmsc436.ucurate;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
@@ -21,6 +22,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -47,30 +53,54 @@ public class CreateTour extends FragmentActivity implements OnMapReadyCallback {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //TODO get list of stops from db
-        Stop test = new Stop("Pin", new LatLng(38.9869,-76.9426));
-        test.setDescription("This is the description.");
-        Stop test2 = new Stop("Pin 2", new LatLng(38, -76.8));
-        Stop test3 = new Stop("Pin 3", new LatLng(38.2, -76.3));
-        Stop[] pins = {test, test2, test3};
-        mAdapter = new StopListAdapter(this, pins);
-        mRecyclerView.setAdapter(mAdapter);
-
-        findViewById(R.id.create_tour_button).setOnClickListener(new View.OnClickListener() {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("pins").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                String name = ((TextView) findViewById(R.id.tour_name)).getText().toString().trim();
-                String description = ((TextView) findViewById(R.id.tour_des)).getText().toString().trim();
-                ArrayList<Stop> selected = mAdapter.getSelected();
-                if (name.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Must enter a title.", Toast.LENGTH_LONG).show();
-                } else if (selected.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Must select at least one pin.", Toast.LENGTH_LONG).show();
-                } else {
-                    //TODO return to home page, save in db
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Stop> stops = new ArrayList<Stop>();
+                for (DataSnapshot pinSnapshot : dataSnapshot.getChildren()){
+                    Stop temp = new Stop();
+                    DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
+                    stops.add(temp);
                 }
+
+                mAdapter = new StopListAdapter(CreateTour.this, stops.toArray(new Stop[0]));
+                mRecyclerView.setAdapter(mAdapter);
+
+                findViewById(R.id.create_tour_button).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String title = ((TextView) findViewById(R.id.tour_name)).getText().toString().trim();
+                        ArrayList<Stop> selected = mAdapter.getSelected();
+                        if (title.isEmpty()) {
+                            Toast.makeText(getApplicationContext(), "Must enter a title.", Toast.LENGTH_LONG).show();
+                        } else if (selected.isEmpty()) {
+                            Toast.makeText(getApplicationContext(), "Must select at least one pin.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Tour tour = new Tour(title);
+                            //TODO set description
+                            tour.setStops(selected.toArray(new Stop[selected.size()]));
+                            DatabaseAccessor db = new DatabaseAccessor();
+                            //TODO replace with real userID
+                            db.insertTour(tour, "12345");
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //not implemented
             }
         });
+
+
+
+        //Start callback
+
+        //End callback
     }
 
     @Override
