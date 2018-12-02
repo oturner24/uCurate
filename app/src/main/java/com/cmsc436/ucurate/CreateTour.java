@@ -83,8 +83,16 @@ public class CreateTour extends FragmentActivity implements OnMapReadyCallback {
                             tour.setStops(selected.toArray(new Stop[selected.size()]));
                             DatabaseAccessor db = new DatabaseAccessor();
                             //TODO replace with real userID
+
+                            //calculate and set distance of tour
+                            tour.setDistance(calcDistance(tour.getStops()));
+
                             db.insertTour(tour, "12345");
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                            //calculate and set distance of tour
+                            tour.setDistance(calcDistance(tour.getStops()));
+
                             startActivity(intent);
                         }
                     }
@@ -148,6 +156,22 @@ public class CreateTour extends FragmentActivity implements OnMapReadyCallback {
                         }
                     }
                 });
+    }
+
+    private double calcDistance(Stop[] stops){
+        float[] results = new float[1];
+        float dist = 0;
+
+        for(int i = 1; i < stops.length; i++){
+            LatLng loc = stops[i].getCoordinate();
+            LatLng prevLoc = stops[i-1].getCoordinate();
+            Location.distanceBetween(prevLoc.latitude, prevLoc.longitude, loc.latitude, loc.longitude, results);
+            dist += results[0];
+        }
+
+        dist = dist * (float) 0.00062137;
+
+        return dist;
     }
 
 }

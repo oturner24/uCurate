@@ -8,6 +8,7 @@ public class Tour implements Parcelable{
     private String description;
     private int numStops;
     private Stop[] stops;
+    private double distance;
 
     private String ID;
 
@@ -21,6 +22,8 @@ public class Tour implements Parcelable{
         return description;
     }
 
+    public double getDistance() { return this.distance; }
+
     public int getNumStops() {
         return numStops;
     }
@@ -32,6 +35,8 @@ public class Tour implements Parcelable{
     public String getTitle() { return title; }
 
     public String getID() { return ID;}
+
+    public void setDistance(double distance) {this.distance = distance; }
 
     public void setDescription(String description) {
         this.description = description;

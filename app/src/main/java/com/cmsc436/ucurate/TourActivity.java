@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 
@@ -78,6 +79,8 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
         mBackButton = findViewById(R.id.button3);
         mBackButton.setEnabled(false);
         curr = 0;
+
+        editDescription();
 
         complete = new PolylineOptions();
         currLoc = stops[curr].getCoordinate();
@@ -186,6 +189,8 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
             mButton.setText("End");
         }
 
+        editDescription();
+
 
     }
 
@@ -216,17 +221,13 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(curr < stops.length - 1){
             mButton.setText("Next");
         }
+
+        editDescription();
     }
 
 
-    public Bitmap scaleDownBitmap(Bitmap photo) {
-        float densityMultiplier = getResources().getDisplayMetrics().density;
-
-        int h = (int) (50 * densityMultiplier);
-        int w = (int) (h * photo.getWidth()/((double) photo.getHeight()));
-
-        photo = Bitmap.createScaledBitmap(photo, w, h, true);
-
-        return photo;
+    public void editDescription(){
+        TextView tv = findViewById(R.id.textView5);
+        tv.setText(stops[curr].getDescription());
     }
 }

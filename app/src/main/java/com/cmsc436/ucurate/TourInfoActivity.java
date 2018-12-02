@@ -1,6 +1,7 @@
 package com.cmsc436.ucurate;
 
 import android.content.Intent;
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +27,7 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
     private Tour mTour;
     private static final String TOUR = "TOUR";
     private Stop[] stops;
+    private float distance = 0;
 
 
     @Override
@@ -42,7 +44,10 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
 
         String tourTitle = mTour.getTitle();
         String description = mTour.getDescription();
-        int num_stops = mTour.getNumStops();
+        String num_stopsStr = String.valueOf(stops.length) + " stops";
+        String distanceStr = String.format("%.2f miles", mTour.getDistance());
+
+
 
 
         TextView title = findViewById(R.id.tour_name);
@@ -52,7 +57,10 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
         desc.setText(description);
 
         TextView num = findViewById(R.id.num_stops);
-        num.setText("" + num_stops);
+        num.setText(num_stopsStr);
+
+        TextView dist = findViewById(R.id.distance);
+        dist.setText(distanceStr);
 
         Button mButton = findViewById(R.id.button);
 
@@ -79,6 +87,14 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
             String title = stops[i].getTitle();
             route.add(loc);
             map.addMarker(new MarkerOptions().position(loc).title(title));
+            float[] results = new float[1];
+
+            if(i > 0){
+                LatLng prevLoc = stops[i-1].getCoordinate();
+                Location.distanceBetween(prevLoc.latitude, prevLoc.longitude, loc.latitude, loc.longitude, results);
+                distance += results[0];
+            }
+
         }
 
         route.add(stops[0].getCoordinate());
