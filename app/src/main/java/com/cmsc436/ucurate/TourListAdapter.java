@@ -63,7 +63,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
 
                 DatabaseAccessor db = new DatabaseAccessor();
 
-                //get tour from database
+                //TODO: get tour from database
                 String tourTitle = (String) textView.getText();
                 String tourID = mHash.get(tourTitle);
                 mTour = db.getTourByID(tourID);
