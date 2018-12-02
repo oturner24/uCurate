@@ -14,6 +14,8 @@ public class Stop implements Parcelable {
     private LatLng coordinate;
     private Bitmap image;
 
+    private String ID;
+
     public Stop(String title, LatLng coordinate){
         this.title = title;
         this.coordinate = coordinate;
@@ -43,6 +45,8 @@ public class Stop implements Parcelable {
         return description;
     }
 
+    public String getID() { return ID;}
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -58,6 +62,8 @@ public class Stop implements Parcelable {
     public void setImage(Bitmap image) {
         this.image = image;
     }
+
+    public void setID(String ID){this.ID = ID;}
 
 
 

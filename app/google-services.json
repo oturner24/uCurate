@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "396007059369",
+    "firebase_url": "https://ucurate-a18db.firebaseio.com",
+    "project_id": "ucurate-a18db",
+    "storage_bucket": "ucurate-a18db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396007059369:android:c798cecbce8c7a86",
+        "android_client_info": {
+          "package_name": "com.cmsc436.ucurate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "396007059369-3q4qtk5kml6kud3m0s11vhspda9n0ku2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cmsc436.ucurate",
+            "certificate_hash": "639dc8408e17140302490d04765660fce59f3597"
+          }
+        },
+        {
+          "client_id": "396007059369-e7ircq3b3d3vt3376m0mn86r0h7iqe6p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaMRlRymf7k1bismCm_bsrT6uY1_njLFQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396007059369-e7ircq3b3d3vt3376m0mn86r0h7iqe6p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

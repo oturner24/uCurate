@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 
@@ -78,6 +79,8 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
         mBackButton = findViewById(R.id.button3);
         mBackButton.setEnabled(false);
         curr = 0;
+
+        editDescription();
 
         complete = new PolylineOptions();
         currLoc = stops[curr].getCoordinate();
@@ -147,13 +150,16 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Marker currMarker = markers[curr];
                 if (marker.equals(currMarker)){
                     Log.d(TAG,"right marker");
+                    Bitmap img1 = stops[curr].getImage();
                     /*
                     Bitmap preimg = BitmapFactory.decodeResource(getApplicationContext().getResources(),
                             R.drawable.img1);
                     Bitmap img1 = scaleDownBitmap(preimg);
+                    */
+
                     Drawable img = new BitmapDrawable(getResources(), img1);
                     imagePopup.initiatePopup(img);
-                    imagePopup.viewPopup();*/
+                    imagePopup.viewPopup();
 
 
                 }
@@ -182,6 +188,8 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(curr == stops.length - 1) {
             mButton.setText("End");
         }
+
+        editDescription();
 
 
     }
@@ -213,16 +221,19 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(curr < stops.length - 1){
             mButton.setText("Next");
         }
+
+        editDescription();
     }
 
-    public Bitmap scaleDownBitmap(Bitmap photo) {
-        float densityMultiplier = getResources().getDisplayMetrics().density;
 
-        int h = (int) (50 * densityMultiplier);
-        int w = (int) (h * photo.getWidth()/((double) photo.getHeight()));
+    public void editDescription(){
+        TextView tv = findViewById(R.id.textView);
 
-        photo = Bitmap.createScaledBitmap(photo, w, h, true);
-
-        return photo;
+        if(stops[curr].getDescription() == null){
+            tv.setVisibility(View.GONE);
+        } else {
+            tv.setVisibility(View.VISIBLE);
+            tv.setText(stops[curr].getDescription());
+        }
     }
 }

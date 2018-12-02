@@ -1,7 +1,9 @@
 package com.cmsc436.ucurate;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,7 +37,17 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
         ((TextView) findViewById(R.id.drop_des)).setText(stop.getDescription());
         ((ImageView) findViewById(R.id.drop_img)).setImageBitmap(stop.getImage());
 
-        //TODO on click done, insert into database and return to home page
+        findViewById(R.id.drop_done).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseAccessor db = new DatabaseAccessor();
+                //TODO replace with real userID
+                db.insertPin(stop, "12345");
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
