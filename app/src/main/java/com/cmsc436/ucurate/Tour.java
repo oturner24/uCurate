@@ -4,15 +4,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Tour implements Parcelable{
-    private String description;
     private String title;
+    private String description;
     private int numStops;
     private double distance;
     private Stop[] stops;
 
+    private String ID;
+
     public Tour(String title){
         this.title = title;
     }
+
+    public Tour(){}
 
     public String getDescription() {
         return description;
@@ -32,6 +36,8 @@ public class Tour implements Parcelable{
 
     public String getTitle() { return title; }
 
+    public String getID() { return ID;}
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -49,6 +55,9 @@ public class Tour implements Parcelable{
     public void setStops(Stop[] stops) {
         this.stops = stops;
     }
+
+    public void setID(String ID){this.ID = ID;}
+
 
     public Tour(Parcel in){
         this.title = in.readString();
