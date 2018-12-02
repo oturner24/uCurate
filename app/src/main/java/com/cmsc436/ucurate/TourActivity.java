@@ -147,13 +147,16 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Marker currMarker = markers[curr];
                 if (marker.equals(currMarker)){
                     Log.d(TAG,"right marker");
+                    Bitmap img1 = stops[curr].getImage();
                     /*
                     Bitmap preimg = BitmapFactory.decodeResource(getApplicationContext().getResources(),
                             R.drawable.img1);
                     Bitmap img1 = scaleDownBitmap(preimg);
+                    */
+
                     Drawable img = new BitmapDrawable(getResources(), img1);
                     imagePopup.initiatePopup(img);
-                    imagePopup.viewPopup();*/
+                    imagePopup.viewPopup();
 
 
                 }
@@ -214,6 +217,7 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
             mButton.setText("Next");
         }
     }
+
 
     public Bitmap scaleDownBitmap(Bitmap photo) {
         float densityMultiplier = getResources().getDisplayMetrics().density;

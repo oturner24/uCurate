@@ -18,6 +18,7 @@ public class TourListActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private Button mButton;
     private String[] myDataset;
+    private static final String TOURS = "TOURS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +35,12 @@ public class TourListActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // specify an adapter (see also next example)
         // Will need to get tour names from database
-        myDataset = new String[]{"Street Art", "Abstract Art", "Sculpture", "Testudos", "Multicultural", "Kids Tour", "Hidden Gems", "Student Work"};
+
+        myDataset = getIntent().getStringArrayExtra(TOURS);
+
+        //myDataset = new String[]{"Street Art", "Abstract Art", "Sculpture", "Testudos", "Multicultural", "Kids Tour", "Hidden Gems", "Student Work"};
+
         mAdapter = new TourListAdapter(myDataset);
         mRecyclerView.setAdapter(mAdapter);
 
