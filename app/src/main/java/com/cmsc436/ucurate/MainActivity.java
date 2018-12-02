@@ -34,7 +34,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         launchTourList.setOnClickListener(new OnClickListener() {
              @Override
                 public void onClick(View v) {
+                    DatabaseAccessor db = new DatabaseAccessor();
+                    Tour[] tours = db.getAllTours();
                     Intent intent1 = new Intent(MainActivity.this, TourListActivity.class);
+                    intent1.putExtra("TOURS", tours);
                     startActivity(intent1);
 
                 }
