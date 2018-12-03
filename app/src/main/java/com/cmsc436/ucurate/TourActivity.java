@@ -52,6 +52,7 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Polyline polylineC;
     private Marker[] markers;
     private static String TAG = "TA";
+    private TextView tv;
 
 
 
@@ -80,6 +81,7 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
         mBackButton.setEnabled(false);
         curr = 0;
 
+        tv = findViewById(R.id.textView5);
         editDescription();
 
         complete = new PolylineOptions();
@@ -227,13 +229,19 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     public void editDescription(){
-        TextView tv = findViewById(R.id.textView);
+        //TextView tv = (TextView) findViewById(R.id.textView);
 
         if(stops[curr].getDescription() == null){
+            Log.d(TAG,"no description");
             if(tv != null){
+                Log.d(TAG,"tv null");
+                tv.setVisibility(View.GONE);
+            } else {
+                tv.setText("no description");
                 tv.setVisibility(View.GONE);
             }
         } else {
+            Log.d(TAG,"is description");
             tv.setText(stops[curr].getDescription());
             tv.setVisibility(View.VISIBLE);
         }

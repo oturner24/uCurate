@@ -42,8 +42,8 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
         findViewById(R.id.drop_done).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseAccessor db = new DatabaseAccessor();
-                db.insertPin(stop, userID);  //null error here
+               // DatabaseAccessor db = new DatabaseAccessor();
+               // db.insertPin(stop, userID);  //null error here
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
