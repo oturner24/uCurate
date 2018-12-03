@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,6 +30,8 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
     private static final String TOUR = "TOUR";
     private Stop[] stops;
     private float distance = 0;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
 
 
     @Override
@@ -61,6 +65,16 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
 
         TextView dist = findViewById(R.id.distance);
         dist.setText(distanceStr);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.image_recycler);
+
+        mAdapter = new TourInfoImageAdapter(getApplicationContext(), stops);
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+
+        LinearLayoutManager horizontalLayoutManagaer = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(horizontalLayoutManagaer);
+        mRecyclerView.setAdapter(mAdapter);
 
         Button mButton = findViewById(R.id.button);
 
