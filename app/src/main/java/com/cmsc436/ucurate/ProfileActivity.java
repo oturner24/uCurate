@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -76,17 +77,22 @@ public class ProfileActivity extends AppCompatActivity {
                 mRecyclerView.setHasFixedSize(true);
 
                 // use a linear layout manager
-                mLayoutManager = new LinearLayoutManager(ProfileActivity.this);
-                mRecyclerView.setLayoutManager(mLayoutManager);
+                //mLayoutManager = new LinearLayoutManager(ProfileActivity.this);
+                //mRecyclerView.setLayoutManager(mLayoutManager);
 
                 // Will need to get pin titles from database, unclear if this is done correctly
                 //TODO: see comment and below code?
 
                 Stop[] stops = (Stop[]) getIntent().getParcelableArrayExtra(STOPS);
-                myDataset = getPinNames(stops);
+                if (stops != null) {
+                    myDataset = getPinNames(stops);
 
-                mAdapter = new StopListAdapter(ProfileActivity.this, myDataset);
-                mRecyclerView.setAdapter(mAdapter);
+                    mAdapter = new StopListAdapter(ProfileActivity.this, myDataset);
+                    mRecyclerView.setAdapter(mAdapter);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No pins dropped.", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
@@ -104,17 +110,17 @@ public class ProfileActivity extends AppCompatActivity {
 
     public Stop[] getPinNames(Stop[] stops) {
 
-        for (int i = 0; i < stops.length; i++) {
-            String stopName = stops[i].getTitle();
-            //String stopID = stops[i].getID();
-            Stop curr = stops[i];
+            for (int i = 0; i < stops.length; i++) {
+                String stopName = stops[i].getTitle();
+                //String stopID = stops[i].getID();
+                Stop curr = stops[i];
 
-            hash.put(curr, stopName);
-        }
+                hash.put(curr, stopName);
+            }
 
-        Set<Stop> keys = hash.keySet();
-        Stop[] stopNames = (Stop[]) keys.toArray();
-        return stopNames;
+            Set<Stop> keys = hash.keySet();
+            Stop[] stopNames = (Stop[]) keys.toArray();
+            return stopNames;
     }
 
     }

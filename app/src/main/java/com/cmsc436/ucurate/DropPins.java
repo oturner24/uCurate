@@ -43,7 +43,7 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
                 DatabaseAccessor db = new DatabaseAccessor();
-                db.insertPin(stop, userID);
+                db.insertPin(stop, userID);  //null error here
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }

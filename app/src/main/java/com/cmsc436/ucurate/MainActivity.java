@@ -50,10 +50,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (this == null) {
+            Log.i("TAG", "this is null");
+        } else {
+            //SupportMapFragment mapFragment =
+             //       (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
+            //mapFragment.getMapAsync(this);
+        }
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
@@ -93,23 +97,42 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
         });
 
-        Button launchAddPin = findViewById(R.id.button4);
-        launchAddPin.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent2 = new Intent(MainActivity.this, AddPin.class);
-                intent2.putExtra("userID", userID);
-                startActivity(intent2);
-
-            }
-        });
-
         Button launchProfile = findViewById(R.id.button2);
         launchProfile.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent3 = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent3);
+            }
+        });
+
+        Button launchAddTour = findViewById(R.id.button4);
+        launchAddTour.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent4 = new Intent(MainActivity.this, CreateTour.class);
+                startActivity(intent4);
+
+            }
+        });
+
+        Button launchHome = findViewById(R.id.button5);
+        launchHome.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent5 = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intent5);
+
+            }
+        });
+
+        Button launchAddPin = findViewById(R.id.button6);
+        launchAddPin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent2 = new Intent(MainActivity.this, AddPin.class);
+                startActivity(intent2);
+
             }
         });
 
@@ -222,36 +245,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         for (Stop s : stops){
             Log.i("database", s.getTitle());
         }
-
-        Button launchAddTour = findViewById(R.id.button4);
-        launchAddTour.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent4 = new Intent(MainActivity.this, CreateTour.class);
-                startActivity(intent4);
-
-            }
-        });
-
-        Button launchHome = findViewById(R.id.button5);
-        launchHome.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent5 = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(intent5);
-
-            }
-        });
-
-        Button launchAddPin = findViewById(R.id.button6);
-        launchAddPin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent2 = new Intent(MainActivity.this, AddPin.class);
-                startActivity(intent2);
-
-            }
-        });
 
     }
 

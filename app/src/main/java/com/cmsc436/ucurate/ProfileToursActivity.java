@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class ProfileToursActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         Button launchAddPin = findViewById(R.id.button23);
-        launchAddPin.setOnClickListener(new View.OnClickListener() {
+        launchAddPin.setOnClickListener(new View.OnClickListener() { //null error here
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(ProfileToursActivity.this, AddPin.class);
@@ -77,16 +78,21 @@ public class ProfileToursActivity extends AppCompatActivity {
                 mRecyclerView.setHasFixedSize(true);
 
                 // use a linear layout manager
-                mLayoutManager = new LinearLayoutManager(ProfileToursActivity.this);
-                mRecyclerView.setLayoutManager(mLayoutManager);
+                //mLayoutManager = new LinearLayoutManager(ProfileToursActivity.this);
+                //mRecyclerView.setLayoutManager(mLayoutManager);
 
                 // Will need to get tour names from database
 
-                Tour[] tours = (Tour[]) getIntent().getParcelableArrayExtra(TOURS);
-                myDataset = getTourNames(tours);
 
-                mAdapter = new TourListAdapter(myDataset, hash);
-                mRecyclerView.setAdapter(mAdapter);
+                Tour[] tours = (Tour[]) getIntent().getParcelableArrayExtra(TOURS);
+                if (tours != null) {
+                    myDataset = getTourNames(tours);
+
+                    mAdapter = new TourListAdapter(myDataset, hash);
+                    mRecyclerView.setAdapter(mAdapter);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No tours made.", Toast.LENGTH_LONG).show();
+                }
 
             }
         });
