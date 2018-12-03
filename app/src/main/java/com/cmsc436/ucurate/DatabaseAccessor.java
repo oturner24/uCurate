@@ -47,8 +47,8 @@ public class DatabaseAccessor {
 
     public void insertPin(Stop stop, String UserID){
         DatabaseReference newPin = mDatabase.child("pins").push();
-        newPin.child("title").setValue(stop.getTitle());
-        newPin.child("description").setValue(stop.getDescription());
+        newPin.child("title").setValue(stop.getTitle().toString());
+        newPin.child("description").setValue(stop.getDescription().toString());
         newPin.child("latitude").setValue(stop.getCoordinate().latitude);
         newPin.child("longitude").setValue(stop.getCoordinate().longitude);
         newPin.child("owner").setValue(UserID);

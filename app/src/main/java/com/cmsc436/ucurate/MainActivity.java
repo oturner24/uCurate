@@ -72,6 +72,8 @@ public class MainActivity extends FragmentActivity  {
         } else {
             //Uncomment if you want to force login every single time
             //createSignInIntent();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            userID = user.getUid();
         }
 
         ImageView mImage = findViewById(R.id.imageView2);
