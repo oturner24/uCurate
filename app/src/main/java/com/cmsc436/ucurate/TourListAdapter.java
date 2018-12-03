@@ -28,6 +28,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
     private static final String TOUR = "TOUR";
     private Tour mTour;
     private HashMap<String, String> mHash;
+    private String userID;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -42,9 +43,10 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public TourListAdapter(String[] myDataset, HashMap hash) {
+    public TourListAdapter(String[] myDataset, HashMap hash, String userID) {
         mDataset = myDataset;
         mHash = hash;
+        this.userID = userID;
     }
 
     // Create new views (invoked by the layout manager)
@@ -64,7 +66,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
                 // Display a Toast message indicting the selected item
                 //Toast.makeText(mContext, textView.getText(), Toast.LENGTH_SHORT).show();
 
-                //TODO: get tour from database
+                //Tget tour from database
                /*DatabaseAccessor db = new DatabaseAccessor();
                 String tourTitle = (String) textView.getText();
                 String tourID = mHash.get(tourTitle);
@@ -107,7 +109,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
 
                 Log.d(TAG,"I've been clicked");
                 Intent intent = new Intent(mContext, TourInfoActivity.class);
-
+                intent.putExtra("userID",userID);
                 intent.putExtra(TOUR, mTour);
                 mContext.startActivity(intent);
             }

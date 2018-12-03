@@ -32,6 +32,7 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
     private float distance = 0;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
+    private String userID;
 
 
     @Override
@@ -43,7 +44,9 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        userID = getIntent().getStringExtra("userID");
         mTour = getIntent().getParcelableExtra(TOUR);
+
         stops = mTour.getStops();
 
         String tourTitle = mTour.getTitle();
@@ -83,7 +86,7 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TourInfoActivity.this, TourActivity.class);
-
+                intent.putExtra("userID",userID);
                 intent.putExtra(TOUR, mTour);
                 startActivity(intent);
 

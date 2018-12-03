@@ -13,6 +13,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -24,6 +31,7 @@ public class TourListActivity extends AppCompatActivity {
     private String[] myDataset;
     private static final String TOURS = "TOURS";
     private HashMap<String, String> hash;
+    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +43,7 @@ public class TourListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(TourListActivity.this, AddPin.class);
+                intent2.putExtra("userID",userID);
                 startActivity(intent2);
 
             }
@@ -45,6 +54,7 @@ public class TourListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent3 = new Intent(TourListActivity.this, ProfileActivity.class);
+                intent3.putExtra("userID",userID);
                 startActivity(intent3);
 
             }
@@ -54,8 +64,28 @@ public class TourListActivity extends AppCompatActivity {
         launchAddTour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent2 = new Intent(TourListActivity.this, CreateTour.class);
-                startActivity(intent2);
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child("pins").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ArrayList<Stop> stops = new ArrayList<Stop>();
+                        for (DataSnapshot pinSnapshot : dataSnapshot.getChildren()){
+                            Stop temp = new Stop();
+                            DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
+                            stops.add(temp);
+                        }
+
+                        Intent intent4 = new Intent(TourListActivity.this, CreateTour.class);
+                        intent4.putExtra("userID", userID);
+                        intent4.putExtra("stops", stops);
+                        startActivity(intent4);
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //not implemented
+                    }
+                });
 
             }
         });
@@ -65,6 +95,7 @@ public class TourListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent5 = new Intent(TourListActivity.this, MainActivity.class);
+                intent5.putExtra("userID",userID);
                 startActivity(intent5);
 
             }
@@ -82,13 +113,14 @@ public class TourListActivity extends AppCompatActivity {
 
         // Will need to get tour names from database
 
+        userID = getIntent().getStringExtra("userID");
         Parcelable[] tours = getIntent().getParcelableArrayExtra(TOURS);
         myDataset = getTourNames(tours);
 
 
         //myDataset = new String[]{"Street Art", "Abstract Art", "Sculpture", "Testudos", "Multicultural", "Kids Tour", "Hidden Gems", "Student Work"};
 
-        mAdapter = new TourListAdapter(myDataset, hash);
+        mAdapter = new TourListAdapter(myDataset, hash, userID);
         mRecyclerView.setAdapter(mAdapter);
 
         Intent intent = getIntent();
@@ -120,7 +152,7 @@ public class TourListActivity extends AppCompatActivity {
             }
         }
 
-        mAdapter = new TourListAdapter(newDataSet, hash);
+        mAdapter = new TourListAdapter(newDataSet, hash, userID);
         mRecyclerView.setAdapter(mAdapter);
 
     }

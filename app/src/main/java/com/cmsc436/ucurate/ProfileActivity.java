@@ -10,6 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -19,18 +26,21 @@ public class ProfileActivity extends AppCompatActivity {
     RecyclerView.LayoutManager mLayoutManager;
     private Stop[] myDataset;
     private static final String STOPS = "STOPS";
-    private HashMap<Stop, String> hash;
+    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        userID = getIntent().getStringExtra("userID");
+
         Button launchAddPin = findViewById(R.id.button10);
         launchAddPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(ProfileActivity.this, AddPin.class);
+                intent2.putExtra("userID",userID);
                 startActivity(intent2);
 
             }
@@ -41,6 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent3 = new Intent(ProfileActivity.this, ProfileActivity.class);
+                intent3.putExtra("userID",userID);
                 startActivity(intent3);
 
             }
@@ -50,8 +61,27 @@ public class ProfileActivity extends AppCompatActivity {
         launchAddTour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent2 = new Intent(ProfileActivity.this, CreateTour.class);
-                startActivity(intent2);
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child("pins").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ArrayList<Stop> stops = new ArrayList<Stop>();
+                        for (DataSnapshot pinSnapshot : dataSnapshot.getChildren()){
+                            Stop temp = new Stop();
+                            DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
+                            stops.add(temp);
+                        }
+                        Intent intent4 = new Intent(ProfileActivity.this, CreateTour.class);
+                        intent4.putExtra("userID", userID);
+                        intent4.putExtra("stops", stops);
+                        startActivity(intent4);
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //not implemented
+                    }
+                });
 
             }
         });
@@ -61,6 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent5 = new Intent(ProfileActivity.this, MainActivity.class);
+                intent5.putExtra("userID",userID);
                 startActivity(intent5);
 
             }
@@ -80,18 +111,36 @@ public class ProfileActivity extends AppCompatActivity {
                 //mLayoutManager = new LinearLayoutManager(ProfileActivity.this);
                 //mRecyclerView.setLayoutManager(mLayoutManager);
 
-                // Will need to get pin titles from database, unclear if this is done correctly
-                //TODO: see comment and below code?
 
-                Stop[] stops = (Stop[]) getIntent().getParcelableArrayExtra(STOPS);
-                if (stops != null) {
-                    myDataset = getPinNames(stops);
+                //First set an empty adapter
+                mAdapter = new StopListAdapter(ProfileActivity.this, new Stop[0]);
+                mRecyclerView.setAdapter(mAdapter);
 
-                    mAdapter = new StopListAdapter(ProfileActivity.this, myDataset);
-                    mRecyclerView.setAdapter(mAdapter);
-                } else {
-                    Toast.makeText(getApplicationContext(), "No pins dropped.", Toast.LENGTH_LONG).show();
-                }
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child("pins").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ArrayList<Stop> stops = new ArrayList<Stop>();
+                        for (DataSnapshot pinSnapshot : dataSnapshot.getChildren()){
+                            Stop temp = new Stop();
+                            DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
+                            stops.add(temp);
+                        }
+
+                        if (stops.size() > 0) {
+                            mAdapter = new StopListAdapter(ProfileActivity.this, stops.toArray(new Stop[0]));
+                            mRecyclerView.setAdapter(mAdapter);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "No pins dropped.", Toast.LENGTH_LONG).show();
+                        }
+
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //not implemented
+                    }
+                });
 
             }
         });
@@ -101,14 +150,16 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent4 = new Intent(ProfileActivity.this, ProfileToursActivity.class);
+                intent4.putExtra("userID",userID);
                 startActivity(intent4);
             }
         });
     }
 
 
-
+    //Broken, also pretty sure its unnecessary
     public Stop[] getPinNames(Stop[] stops) {
+        HashMap<Stop, String> hash = new HashMap<>();
 
             for (int i = 0; i < stops.length; i++) {
                 String stopName = stops[i].getTitle();

@@ -39,10 +39,15 @@ public class CreateTour extends FragmentActivity implements OnMapReadyCallback {
     private FusedLocationProviderClient mFusedLocationClient;
     private LatLng mCoords;
 
+    private String userID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_tour);
+
+        userID = getIntent().getStringExtra("userID");
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
         .findFragmentById(R.id.map3);
@@ -53,55 +58,38 @@ public class CreateTour extends FragmentActivity implements OnMapReadyCallback {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("pins").addListenerForSingleValueEvent(new ValueEventListener() {
+
+        ArrayList<Stop> stops = getIntent().getParcelableArrayListExtra("stops");
+        mAdapter = new StopListAdapter(CreateTour.this, stops.toArray(new Stop[0]));
+        mRecyclerView.setAdapter(mAdapter);
+
+        findViewById(R.id.create_tour_button).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Stop> stops = new ArrayList<Stop>();
-                for (DataSnapshot pinSnapshot : dataSnapshot.getChildren()){
-                    Stop temp = new Stop();
-                    DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
-                    stops.add(temp);
+            public void onClick(View v) {
+                String title = ((TextView) findViewById(R.id.tour_name)).getText().toString().trim();
+                String description = ((TextView) findViewById(R.id.tour_des)).getText().toString().trim();
+                ArrayList<Stop> selected = mAdapter.getSelected();
+                if (title.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Must enter a title.", Toast.LENGTH_LONG).show();
+                } else if (selected.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Must select at least one pin.", Toast.LENGTH_LONG).show();
+                } else {
+                    Tour tour = new Tour(title);
+                    tour.setDescription(description);
+                    tour.setStops(selected.toArray(new Stop[selected.size()]));
+                    DatabaseAccessor db = new DatabaseAccessor();
+
+                    //calculate and set distance of tour
+                    tour.setDistance(calcDistance(tour.getStops()));
+
+                    db.insertTour(tour, userID);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+                    //calculate and set distance of tour
+                    tour.setDistance(calcDistance(tour.getStops()));
+
+                    startActivity(intent);
                 }
-
-                mAdapter = new StopListAdapter(CreateTour.this, stops.toArray(new Stop[0]));
-                mRecyclerView.setAdapter(mAdapter);
-
-                findViewById(R.id.create_tour_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String title = ((TextView) findViewById(R.id.tour_name)).getText().toString().trim();
-                        String description = ((TextView) findViewById(R.id.tour_des)).getText().toString().trim();
-                        ArrayList<Stop> selected = mAdapter.getSelected();
-                        if (title.isEmpty()) {
-                            Toast.makeText(getApplicationContext(), "Must enter a title.", Toast.LENGTH_LONG).show();
-                        } else if (selected.isEmpty()) {
-                            Toast.makeText(getApplicationContext(), "Must select at least one pin.", Toast.LENGTH_LONG).show();
-                        } else {
-                            Tour tour = new Tour(title);
-                            tour.setDescription(description);
-                            tour.setStops(selected.toArray(new Stop[selected.size()]));
-                            DatabaseAccessor db = new DatabaseAccessor();
-                            //TODO replace with real userID
-
-                            //calculate and set distance of tour
-                            tour.setDistance(calcDistance(tour.getStops()));
-
-                            db.insertTour(tour, "12345");
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-
-                            //calculate and set distance of tour
-                            tour.setDistance(calcDistance(tour.getStops()));
-
-                            startActivity(intent);
-                        }
-                    }
-                });
-
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //not implemented
             }
         });
 

@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,6 +38,11 @@ import android.widget.TextView;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 
 import com.google.android.gms.maps.model.Marker;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class TourActivity extends AppCompatActivity implements OnMapReadyCallback{
@@ -53,7 +59,7 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Marker[] markers;
     private static String TAG = "TA";
     private TextView tv;
-
+    private String userID;
 
 
     private static final int PATTERN_DASH_LENGTH_PX = 20;
@@ -73,6 +79,7 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map2);
         mapFragment.getMapAsync(this);
 
+        userID = getIntent().getStringExtra("userID");
         mTour = getIntent().getParcelableExtra(TOUR);
         stops = mTour.getStops();
 
@@ -95,15 +102,36 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View v) {
                 //update line color/dotted
                 //change cameraview to next loc
-                curr++;
-                if(mButton.getText().equals("End")){
-                    Intent intent = new Intent(TourActivity.this, TourListActivity.class);
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                final ArrayList<Tour> tours = new ArrayList<Tour>();
+                mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        DataSnapshot toursSnapshot = dataSnapshot.child("tours");
+                        DataSnapshot pinsSnapshot = dataSnapshot.child("pins");
+                        for (DataSnapshot tourSnapshot: toursSnapshot.getChildren()){
+                            Tour temp = new Tour();
+                            DatabaseAccessor.createTourFromSnapshot(temp, tourSnapshot, pinsSnapshot);
+                            tours.add(temp);
+                        }
 
-                    startActivity(intent);
-                    finish();
-                } else {
-                    updateMapNext();
-                }
+                        curr++;
+                        if(mButton.getText().equals("End")){
+                            Intent intent = new Intent(TourActivity.this, TourListActivity.class);
+                            intent.putExtra("userID", userID);
+                            intent.putExtra("TOURS", tours.toArray(new Tour[0]));
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            updateMapNext();
+                        }
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //not implemented
+                    }
+                });
             }
         });
 
@@ -162,7 +190,6 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Drawable img = new BitmapDrawable(getResources(), img1);
                     imagePopup.initiatePopup(img);
                     imagePopup.viewPopup();
-
 
                 }
 

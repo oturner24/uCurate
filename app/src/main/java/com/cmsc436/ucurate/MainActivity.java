@@ -70,6 +70,7 @@ public class MainActivity extends FragmentActivity  {
         if (auth.getCurrentUser() == null) {
             createSignInIntent();
         } else {
+            //Uncomment if you want to force login every single time
             //createSignInIntent();
         }
 
@@ -94,6 +95,7 @@ public class MainActivity extends FragmentActivity  {
                              }
 
                              Intent intent1 = new Intent(MainActivity.this, TourListActivity.class);
+                             intent1.putExtra("userID", userID);
                              intent1.putExtra("TOURS", tours.toArray(new Tour[0]));
                              startActivity(intent1);
 
@@ -112,6 +114,7 @@ public class MainActivity extends FragmentActivity  {
             @Override
             public void onClick(View v) {
                 Intent intent3 = new Intent(MainActivity.this, ProfileActivity.class);
+                intent3.putExtra("userID", userID);
                 startActivity(intent3);
             }
         });
@@ -120,8 +123,29 @@ public class MainActivity extends FragmentActivity  {
         launchAddTour.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent4 = new Intent(MainActivity.this, CreateTour.class);
-                startActivity(intent4);
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child("pins").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ArrayList<Stop> stops = new ArrayList<Stop>();
+                        for (DataSnapshot pinSnapshot : dataSnapshot.getChildren()){
+                            Stop temp = new Stop();
+                            DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
+                            stops.add(temp);
+                        }
+
+                        Intent intent4 = new Intent(MainActivity.this, CreateTour.class);
+                        intent4.putExtra("userID", userID);
+                        intent4.putExtra("stops", stops);
+                        startActivity(intent4);
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //not implemented
+                    }
+                });
+
 
             }
         });
@@ -141,13 +165,10 @@ public class MainActivity extends FragmentActivity  {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(MainActivity.this, AddPin.class);
+                intent2.putExtra("userID",userID);
                 startActivity(intent2);
-
             }
         });
-
-
-
 
 
     }
