@@ -58,6 +58,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
         TextView v = (TextView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item, parent, false);
 
+        //TODO add DB calls here
         // Clicking on tour will get tour object from database and start TourInfoActivity
         v.setOnClickListener(new View.OnClickListener(){
             @Override
