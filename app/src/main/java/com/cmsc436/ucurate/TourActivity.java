@@ -230,10 +230,12 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView tv = findViewById(R.id.textView);
 
         if(stops[curr].getDescription() == null){
-            tv.setVisibility(View.GONE);
+            if(tv != null){
+                tv.setVisibility(View.GONE);
+            }
         } else {
-            tv.setVisibility(View.VISIBLE);
             tv.setText(stops[curr].getDescription());
+            tv.setVisibility(View.VISIBLE);
         }
     }
 }
