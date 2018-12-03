@@ -30,6 +30,46 @@ public class TourListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tour_list);
 
+        Button launchAddPin = findViewById(R.id.button14);
+        launchAddPin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent2 = new Intent(TourListActivity.this, AddPin.class);
+                startActivity(intent2);
+
+            }
+        });
+
+        Button launchProfile = findViewById(R.id.button16);
+        launchProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent3 = new Intent(TourListActivity.this, ProfileActivity.class);
+                startActivity(intent3);
+
+            }
+        });
+
+        Button launchAddTour = findViewById(R.id.button17);
+        launchAddTour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent2 = new Intent(TourListActivity.this, CreateTour.class);
+                startActivity(intent2);
+
+            }
+        });
+
+        Button launchHome = findViewById(R.id.button15);
+        launchHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent5 = new Intent(TourListActivity.this, MainActivity.class);
+                startActivity(intent5);
+
+            }
+        });
+
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
         // use this setting to improve performance if you know that changes

@@ -66,7 +66,8 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
         TextView dist = findViewById(R.id.distance);
         dist.setText(distanceStr);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.image_recycler);
+        //was image_recycler?
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
         mAdapter = new TourInfoImageAdapter(getApplicationContext(), stops);
         mRecyclerView.setAdapter(mAdapter);

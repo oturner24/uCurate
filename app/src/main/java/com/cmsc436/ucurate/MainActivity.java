@@ -53,9 +53,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         if (this == null) {
             Log.i("TAG", "this is null");
         } else {
-            //SupportMapFragment mapFragment =
-             //       (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
-            //mapFragment.getMapAsync(this);
+            SupportMapFragment mapFragment =
+                    (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
+            mapFragment.getMapAsync(this);
         }
 
 
