@@ -1,9 +1,8 @@
 package com.cmsc436.ucurate;
 import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,24 +10,25 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.support.v4.app.Fragment;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+    private GoogleMap mMap;
+    private Stop stop;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //dbTest();
-
-        /*
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        */
 
         Button launchTourList = findViewById(R.id.button3);
         launchTourList.setOnClickListener(new OnClickListener() {
@@ -58,11 +58,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         launchProfile.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                /*
                 Intent intent3 = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent3);
-                */
             }
         });
 
@@ -97,6 +94,36 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             Log.i("database", s.getTitle());
         }
 
+        Button launchAddTour = findViewById(R.id.button4);
+        launchAddTour.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent4 = new Intent(MainActivity.this, CreateTour.class);
+                startActivity(intent4);
+
+            }
+        });
+
+        Button launchHome = findViewById(R.id.button5);
+        launchHome.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent5 = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intent5);
+
+            }
+        });
+
+        Button launchAddPin = findViewById(R.id.button6);
+        launchAddPin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent2 = new Intent(MainActivity.this, AddPin.class);
+                startActivity(intent2);
+
+            }
+        });
+
     }
 
     @Override
@@ -106,6 +133,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        //TODO implement
+        mMap = googleMap;
+
+        //set marker at current location
+        LatLng loc = stop.getCoordinate();
+        mMap.addMarker(new MarkerOptions().position(loc).title(stop.getTitle())).setDraggable(true);
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                //do nothing
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                //do nothing
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                stop.setCoordinate(marker.getPosition());
+            }
+        });
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+        // Zoom in, animating the camera.
+        mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
     }
 }
