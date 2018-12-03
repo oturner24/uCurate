@@ -32,12 +32,14 @@ public class AddPin extends AppCompatActivity {
     private ImageView imageView;
     private FusedLocationProviderClient mFusedLocationClient;
     private Stop stop;
-    //TODO associate with user id
+    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_pin);
+
+        userID = getIntent().getStringExtra("userID");
 
         imageView = findViewById(R.id.imageView);
         Button upload = findViewById(R.id.upload_photo_button);
@@ -95,6 +97,7 @@ public class AddPin extends AppCompatActivity {
 
                     Intent dropIntent = new Intent(getApplicationContext(), DropPins.class);
                     dropIntent.putExtra("stop", stop);
+                    dropIntent.putExtra("userID", userID);
                     startActivity(dropIntent);
                 }
             }
