@@ -1,5 +1,6 @@
 package com.cmsc436.ucurate;
 import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.support.v4.app.Fragment;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -32,8 +34,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+    private GoogleMap mMap;
+    private Stop stop;
 
     private static final int RC_SIGN_IN = 123;
 
@@ -43,11 +50,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        */
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
@@ -87,8 +93,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
         });
 
-
-
         Button launchAddPin = findViewById(R.id.button4);
         launchAddPin.setOnClickListener(new OnClickListener() {
             @Override
@@ -104,11 +108,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         launchProfile.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                /*
                 Intent intent3 = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent3);
-                */
             }
         });
 
@@ -222,6 +223,36 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             Log.i("database", s.getTitle());
         }
 
+        Button launchAddTour = findViewById(R.id.button4);
+        launchAddTour.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent4 = new Intent(MainActivity.this, CreateTour.class);
+                startActivity(intent4);
+
+            }
+        });
+
+        Button launchHome = findViewById(R.id.button5);
+        launchHome.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent5 = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intent5);
+
+            }
+        });
+
+        Button launchAddPin = findViewById(R.id.button6);
+        launchAddPin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent2 = new Intent(MainActivity.this, AddPin.class);
+                startActivity(intent2);
+
+            }
+        });
+
     }
 
     @Override
@@ -231,6 +262,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        //TODO implement
+        mMap = googleMap;
+
+        //set marker at current location
+        LatLng loc = stop.getCoordinate();
+        mMap.addMarker(new MarkerOptions().position(loc).title(stop.getTitle())).setDraggable(true);
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                //do nothing
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                //do nothing
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                stop.setCoordinate(marker.getPosition());
+            }
+        });
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+        // Zoom in, animating the camera.
+        mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
     }
 }

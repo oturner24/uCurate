@@ -12,89 +12,90 @@ import android.widget.Button;
 import java.util.HashMap;
 import java.util.Set;
 
-public class ProfileActivity extends AppCompatActivity {
+//setContentView(R.layout.activity_profile_tours);
+public class ProfileToursActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
-    private Stop[] myDataset;
-    private static final String STOPS = "STOPS";
-    private HashMap<Stop, String> hash;
+    private String[] myDataset;
+    private static final String TOURS = "TOURS";
+    private HashMap<String, String> hash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Button launchAddPin = findViewById(R.id.button10);
+        Button launchAddPin = findViewById(R.id.button23);
         launchAddPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent2 = new Intent(ProfileActivity.this, AddPin.class);
+                Intent intent2 = new Intent(ProfileToursActivity.this, AddPin.class);
                 startActivity(intent2);
 
             }
         });
 
-        Button launchProfile = findViewById(R.id.button12);
+        Button launchProfile = findViewById(R.id.button22);
         launchProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent3 = new Intent(ProfileActivity.this, ProfileActivity.class);
+                Intent intent3 = new Intent(ProfileToursActivity.this, ProfileActivity.class);
                 startActivity(intent3);
 
             }
         });
 
-        Button launchAddTour = findViewById(R.id.button9);
+        Button launchAddTour = findViewById(R.id.button20);
         launchAddTour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent2 = new Intent(ProfileActivity.this, CreateTour.class);
+                Intent intent2 = new Intent(ProfileToursActivity.this, CreateTour.class);
                 startActivity(intent2);
 
             }
         });
 
-        Button launchHome = findViewById(R.id.button11);
+        Button launchHome = findViewById(R.id.button21);
         launchHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent5 = new Intent(ProfileActivity.this, MainActivity.class);
+                Intent intent5 = new Intent(ProfileToursActivity.this, MainActivity.class);
                 startActivity(intent5);
 
             }
         });
 
-        Button pinList = findViewById(R.id.button7);
-        pinList.setOnClickListener(new View.OnClickListener() {
+        Button tourList = findViewById(R.id.button24);
+        tourList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRecyclerView = (RecyclerView) findViewById(R.id.recycle_pins);
+                mRecyclerView = (RecyclerView) findViewById(R.id.recycle_tours);
 
                 // use this setting to improve performance if you know that changes
                 // in content do not change the layout size of the RecyclerView
                 mRecyclerView.setHasFixedSize(true);
 
                 // use a linear layout manager
-                mLayoutManager = new LinearLayoutManager(ProfileActivity.this);
+                mLayoutManager = new LinearLayoutManager(ProfileToursActivity.this);
                 mRecyclerView.setLayoutManager(mLayoutManager);
 
-                // Will need to get pin titles from database, unclear if this is done correctly
-                //TODO: see comment and below code?
+                // Will need to get tour names from database
 
-                Stop[] stops = (Stop[]) getIntent().getParcelableArrayExtra(STOPS);
-                myDataset = getPinNames(stops);
+                Tour[] tours = (Tour[]) getIntent().getParcelableArrayExtra(TOURS);
+                myDataset = getTourNames(tours);
 
-                mAdapter = new StopListAdapter(ProfileActivity.this, myDataset);
+                mAdapter = new TourListAdapter(myDataset, hash);
                 mRecyclerView.setAdapter(mAdapter);
+
             }
         });
 
-        Button tourList = findViewById(R.id.button8);
-        tourList.setOnClickListener(new View.OnClickListener() {
+        Button pinList = findViewById(R.id.button25);
+        pinList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent4 = new Intent(ProfileActivity.this, ProfileToursActivity.class);
+                Intent intent4 = new Intent(ProfileToursActivity.this, ProfileActivity.class);
                 startActivity(intent4);
             }
         });
@@ -102,19 +103,19 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-    public Stop[] getPinNames(Stop[] stops) {
+    public String[] getTourNames(Tour[] tours) {
 
-        for (int i = 0; i < stops.length; i++) {
-            String stopName = stops[i].getTitle();
-            //String stopID = stops[i].getID();
-            Stop curr = stops[i];
+        for (int i = 0; i < tours.length; i++) {
+            String tourName = tours[i].getTitle();
+            String tourID = tours[i].getID();
 
-            hash.put(curr, stopName);
+            hash.put(tourName, tourID);
         }
 
-        Set<Stop> keys = hash.keySet();
-        Stop[] stopNames = (Stop[]) keys.toArray();
-        return stopNames;
+        Set<String> keys = hash.keySet();
+        String[] tourNames = (String[]) keys.toArray();
+        return tourNames;
     }
 
-    }
+}
+
