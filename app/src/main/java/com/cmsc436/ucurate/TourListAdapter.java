@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.HashMap;
+
 /*This is an adapter for TourListActivity. This class includes the onClickListener that starts
 * the TourInfoActivity
 * */
@@ -20,6 +24,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
     private static String TAG = "TLA";
     private static final String TOUR = "TOUR";
     private Tour mTour;
+    private HashMap<String, String> mHash;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -34,8 +39,9 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public TourListAdapter(String[] myDataset) {
+    public TourListAdapter(String[] myDataset, HashMap hash) {
         mDataset = myDataset;
+        mHash = hash;
     }
 
     // Create new views (invoked by the layout manager)
@@ -55,8 +61,21 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
                 // Display a Toast message indicting the selected item
                 //Toast.makeText(mContext, textView.getText(), Toast.LENGTH_SHORT).show();
 
-                //get tour from database
-                mTour = new Tour("Street Art");
+                DatabaseAccessor db = new DatabaseAccessor();
+
+                //TODO: get tour from database
+                String tourTitle = (String) textView.getText();
+                String tourID = mHash.get(tourTitle);
+                mTour = db.getTourByID(tourID);
+
+                /*mTour = new Tour("Street Art");
+                Stop stop1 = new Stop("stop1", new LatLng(38.9810, -76.9386));
+                Stop stop2 = new Stop("stop2", new LatLng(38.9911, -76.9375));
+                Stop stop3 = new Stop("stop3", new LatLng(38.9879, -76.9442));
+
+                Stop[] stops = new Stop[]{stop1, stop2, stop3};
+
+                mTour.setStops(stops);*/
 
                 Log.d(TAG,"I've been clicked");
                 Intent intent = new Intent(mContext, TourInfoActivity.class);

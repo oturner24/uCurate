@@ -20,6 +20,19 @@
         android:ems="10"
         android:inputType="textPersonName" />
 
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DESCRIPTION" />
+
+    <EditText
+        android:id="@+id/tour_des"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
     <LinearLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
