@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v4.app.Fragment;
 
@@ -45,9 +46,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
-    private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationClient;
+public class MainActivity extends FragmentActivity  {
+    //private GoogleMap mMap;
+    //private FusedLocationProviderClient mFusedLocationClient;
+    //implements OnMapReadyCallback
 
 
     private static final int RC_SIGN_IN = 123;
@@ -60,9 +62,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.mapView);
-        mapFragment.getMapAsync(this);
+        //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+          //      .findFragmentById(R.id.mapView);
+        //mapFragment.getMapAsync(this);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
@@ -70,6 +72,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             //createSignInIntent();
         }
+
+        ImageView mImage = findViewById(R.id.imageView2);
+        mImage.setImageResource(R.drawable.fasika_08);
 
         Button launchTourList = findViewById(R.id.button3);
         launchTourList.setOnClickListener(new OnClickListener() {
@@ -120,7 +125,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-
+        /*
         Button launchHome = findViewById(R.id.button5);
         launchHome.setOnClickListener(new OnClickListener() {
             @Override
@@ -129,7 +134,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent5);
 
             }
-        });
+        });*/
 
         Button launchAddPin = findViewById(R.id.button6);
         launchAddPin.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +145,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+
+
 
 
 
@@ -260,7 +267,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onStart();
     }
 
-    @Override
+    /*@Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         //ask for location permissions if necessary
@@ -301,5 +308,5 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }
                 });
-    }
+    }*/
 }
