@@ -79,7 +79,7 @@ public class CreateTour extends FragmentActivity implements OnMapReadyCallback {
                             Toast.makeText(getApplicationContext(), "Must select at least one pin.", Toast.LENGTH_LONG).show();
                         } else {
                             Tour tour = new Tour(title);
-                            //TODO set description
+                            tour.setDescription(description);
                             tour.setStops(selected.toArray(new Stop[selected.size()]));
                             DatabaseAccessor db = new DatabaseAccessor();
                             //TODO replace with real userID

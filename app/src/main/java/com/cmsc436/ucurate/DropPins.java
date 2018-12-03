@@ -19,6 +19,7 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Stop stop;
+    private String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
 
         //retrieve the stop object passed by add pin
         stop = getIntent().getParcelableExtra("stop");
+        userID = getIntent().getStringExtra("userID");
 
         //populate screen with stop info
         ((TextView) findViewById(R.id.drop_title)).setText(stop.getTitle());
@@ -41,8 +43,7 @@ public class DropPins extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
                 DatabaseAccessor db = new DatabaseAccessor();
-                //TODO replace with real userID
-                db.insertPin(stop, "12345");
+                db.insertPin(stop, userID);
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
