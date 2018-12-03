@@ -42,8 +42,9 @@ public class TourListActivity extends AppCompatActivity {
 
         // Will need to get tour names from database
 
-        Tour[] tours = (Tour[]) getIntent().getParcelableArrayExtra(TOURS);
+        Parcelable[] tours = getIntent().getParcelableArrayExtra(TOURS);
         myDataset = getTourNames(tours);
+
 
         //myDataset = new String[]{"Street Art", "Abstract Art", "Sculpture", "Testudos", "Multicultural", "Kids Tour", "Hidden Gems", "Student Work"};
 
@@ -84,17 +85,18 @@ public class TourListActivity extends AppCompatActivity {
 
     }
 
-    public String[] getTourNames(Tour[] tours){
-
+    public String[] getTourNames(Parcelable[] tours){
+        hash = new HashMap<>();
         for(int i = 0; i < tours.length; i++){
-            String tourName = tours[i].getTitle();
-            String tourID = tours[i].getID();
+            Tour tour = (Tour) tours[i];
+            String tourName = tour.getTitle();
+            String tourID = tour.getID();
 
             hash.put(tourName, tourID);
         }
 
         Set<String> keys = hash.keySet();
-        String[] tourNames = (String[]) keys.toArray();
+        String[] tourNames = (String[]) keys.toArray(new String[keys.size()]);
         return tourNames;
     }
 }

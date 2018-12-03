@@ -2,6 +2,9 @@ package com.cmsc436.ucurate;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,21 +64,46 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
                 // Display a Toast message indicting the selected item
                 //Toast.makeText(mContext, textView.getText(), Toast.LENGTH_SHORT).show();
 
-                DatabaseAccessor db = new DatabaseAccessor();
-
                 //TODO: get tour from database
+               /*DatabaseAccessor db = new DatabaseAccessor();
                 String tourTitle = (String) textView.getText();
                 String tourID = mHash.get(tourTitle);
-                mTour = db.getTourByID(tourID);
+                mTour = db.getTourByID(tourID);*/
 
-                /*mTour = new Tour("Street Art");
-                Stop stop1 = new Stop("stop1", new LatLng(38.9810, -76.9386));
-                Stop stop2 = new Stop("stop2", new LatLng(38.9911, -76.9375));
-                Stop stop3 = new Stop("stop3", new LatLng(38.9879, -76.9442));
+               /*
+                mTour = new Tour("Street Art");
+                mTour.setDescription("Street art from around town");
+
+                Bitmap img1 = scaleDownBitmap(BitmapFactory.decodeResource(mContext.getResources(),
+                        R.drawable.img1));
+
+                Bitmap img2 = scaleDownBitmap(BitmapFactory.decodeResource(mContext.getResources(),
+                        R.drawable.img2));
+                Bitmap img3 = scaleDownBitmap(BitmapFactory.decodeResource(mContext.getResources(),
+                        R.drawable.img3));
+                Stop stop1 = new Stop("stop1", new LatLng(38.9810, -76.9386), img1);
+                Stop stop2 = new Stop("stop2", new LatLng(38.9911, -76.9375), img2);
+                Stop stop3 = new Stop("stop3", new LatLng(38.9879, -76.9442), img3);
 
                 Stop[] stops = new Stop[]{stop1, stop2, stop3};
 
-                mTour.setStops(stops);*/
+                float[] results = new float[1];
+                float dist = 0;
+
+                for(int i = 0; i < stops.length; i++){
+                    LatLng loc = stops[i].getCoordinate();
+                    if(i > 0){
+                        LatLng prevLoc = stops[i-1].getCoordinate();
+                        Location.distanceBetween(prevLoc.latitude, prevLoc.longitude, loc.latitude, loc.longitude, results);
+                        dist += results[0];
+                    }
+                }
+
+                dist = dist * (float) 0.00062137;
+                mTour.setDistance(dist);
+
+                mTour.setStops(stops);
+                */
 
                 Log.d(TAG,"I've been clicked");
                 Intent intent = new Intent(mContext, TourInfoActivity.class);
@@ -103,5 +131,15 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
         return mDataset.length;
     }
 
+    public Bitmap scaleDownBitmap(Bitmap photo) {
+        float densityMultiplier = mContext.getResources().getDisplayMetrics().density;
+
+        int h = (int) (50 * densityMultiplier);
+        int w = (int) (h * photo.getWidth()/((double) photo.getHeight()));
+
+        photo = Bitmap.createScaledBitmap(photo, w, h, true);
+
+        return photo;
+    }
 
 }
