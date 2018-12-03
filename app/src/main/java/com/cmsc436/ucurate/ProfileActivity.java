@@ -9,7 +9,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.HashMap;
+import java.util.Set;
+
 public class ProfileActivity extends AppCompatActivity {
+    RecyclerView mRecyclerView;
+    RecyclerView.Adapter mAdapter;
+    RecyclerView.LayoutManager mLayoutManager;
+    private String[] myDataset;
+    private static final String TOURS = "TOURS";
+    private HashMap<String, String> hash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
         pinList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RecyclerView mRecyclerView;
-                RecyclerView.Adapter mAdapter;
-                RecyclerView.LayoutManager mLayoutManager;
+
                 //tourlist activity?
                 //Intent intent1 = new Intent(ProfileActivity.this, TourListActivity.class);
                 //startActivity(intent1);
@@ -72,15 +79,31 @@ public class ProfileActivity extends AppCompatActivity {
                 mRecyclerView.setLayoutManager(mLayoutManager);
 
 
+                /*Tour[] tours = (Tour[]) getIntent().getParcelableArrayExtra(TOURS);
+                myDataset = getTourNames(tours);
+                I need a version of this for stops/pins*/
 
                 Stop [] mDataSet = {};
                 //TODO: database call to put the correct string array parameter in to the TourListAdapter constructor
                 StopListAdapter mStopAdapter = new StopListAdapter(ProfileActivity.this, mDataSet);
-                mAdapter = new TourListAdapter(myDataset);
+                mAdapter = mStopAdapter;
                 mRecyclerView.setAdapter(mAdapter);
 
             }
         });
+
+        /*mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        Tour[] tours = (Tour[]) getIntent().getParcelableArrayExtra(TOURS);
+        myDataset = getTourNames(tours);
+
+        mAdapter = new TourListAdapter(myDataset, hash);
+        mRecyclerView.setAdapter(mAdapter);*/
 
         Button tourList = findViewById(R.id.button8);
         tourList.setOnClickListener(new View.OnClickListener() {
@@ -90,23 +113,18 @@ public class ProfileActivity extends AppCompatActivity {
                 //Intent intent2 = new Intent(ProfileActivity.this, TourListActivity.class);
                 //startActivity(intent2);
 
-                RecyclerView mRecyclerView;
-                RecyclerView.Adapter mAdapter;
-                RecyclerView.LayoutManager mLayoutManager;
                 mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
                 mRecyclerView.setHasFixedSize(true);
                 mLayoutManager = new LinearLayoutManager(ProfileActivity.this);
                 mRecyclerView.setLayoutManager(mLayoutManager);
 
-
-
-                Stop [] mDataSet = {};
-                //TODO: database call to put the correct string array parameter in to the TourListAdapter constructor
-                mAdapter = new TourListAdapter(_);
+                String[] mDataSet2 = {};
+                HashMap hash = new HashMap();
+                Tour[] tours = (Tour[]) getIntent().getParcelableArrayExtra(TOURS);
+                myDataset = getTourNames(tours);
+                //TODO: database call to put the correct string array parameter in to the TourListAdapter constructor?
+                mAdapter = new TourListAdapter(myDataset, hash);
                 mRecyclerView.setAdapter(mAdapter);
-                String [] mDataSet = {"item 0", "item 1", "item 2"};
-                //TODO: database call to put the correct string array parameter in to the TourListAdapter constructor
-                TourListAdapter mTourAdapter = new TourListAdapter(mDataSet);
 
             }
         });
@@ -114,5 +132,24 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    public String[] getTourNames(Tour[] tours){
+
+        for(int i = 0; i < tours.length; i++){
+            String tourName = tours[i].getTitle();
+            String tourID = tours[i].getID();
+
+            hash.put(tourName, tourID);
+        }
+
+        Set<String> keys = hash.keySet();
+        String[] tourNames = (String[]) keys.toArray();
+        return tourNames;
+    }
+
+    /*
+    public String[] getStops (Stop[] stops) {
+        Do i need this?
+    }
+    */
 
 }
