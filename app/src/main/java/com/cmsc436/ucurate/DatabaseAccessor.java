@@ -1,6 +1,7 @@
 package com.cmsc436.ucurate;
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -20,8 +21,28 @@ public class DatabaseAccessor {
         //Log.i("database", "This is the database key:" + mDatabase.getKey());
     }
 
-    public void insertUser(String username){
-        mDatabase.child("users").push().child("username").setValue(username);
+    public void insertUser(final String userID, final String email){
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                /*
+                for (DataSnapshot child : dataSnapshot.child("users").getChildren()){
+                    if (child.hasChild(userID))
+                        return;
+                }
+                */
+                if (!dataSnapshot.child("users").hasChild(userID)) {
+                    mDatabase.child("users").child(userID).child("email").setValue(email);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     public void insertPin(Stop stop, String UserID){
@@ -50,6 +71,7 @@ public class DatabaseAccessor {
             //Add tour to pin
             mDatabase.child("pins").child(stop.getID()).child("associatedTours").push().setValue(newTour.getKey());
         }
+        mDatabase.child("users").child(UserID).child("associatedTours").push().setValue(newTour.getKey());
         Log.i("database", ("Inserted new tour with ID: " + newTour.getKey()));
         tour.setID(newTour.getKey());
 
@@ -87,7 +109,7 @@ public class DatabaseAccessor {
         Tour tour = empty;
         tour.setTitle((String) tourSnapshot.child("title").getValue());
         tour.setDescription((String) tourSnapshot.child("description").getValue());
-        tour.setNumStops((int) tourSnapshot.child("numStops").getValue());
+        tour.setNumStops(((Number) tourSnapshot.child("numStops").getValue()).intValue());
 
         ArrayList<Stop> stops = new ArrayList<Stop>();
         for (DataSnapshot snapshot : pinsSnapshot.getChildren()){
@@ -95,7 +117,7 @@ public class DatabaseAccessor {
             createPinFromSnapshot(temp, snapshot);
             stops.add(temp);
         }
-        tour.setStops((Stop[])stops.toArray());
+        tour.setStops(stops.toArray(new Stop[0]));
 
         tour.setID(tourSnapshot.getKey());
     }

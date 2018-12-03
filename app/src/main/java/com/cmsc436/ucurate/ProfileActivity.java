@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-
+/*
 public class ProfileActivity extends AppCompatActivity {
 
     @Override
@@ -71,8 +71,6 @@ public class ProfileActivity extends AppCompatActivity {
                 mLayoutManager = new LinearLayoutManager(ProfileActivity.this);
                 mRecyclerView.setLayoutManager(mLayoutManager);
 
-
-
                 Stop [] mDataSet = {};
                 //TODO: database call to put the correct string array parameter in to the TourListAdapter constructor
                 StopListAdapter mStopAdapter = new StopListAdapter(ProfileActivity.this, mDataSet);
@@ -99,8 +97,6 @@ public class ProfileActivity extends AppCompatActivity {
                 mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-
-                Stop [] mDataSet = {};
                 //TODO: database call to put the correct string array parameter in to the TourListAdapter constructor
                 mAdapter = new TourListAdapter(_);
                 mRecyclerView.setAdapter(mAdapter);
@@ -116,3 +112,4 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 }
+*/
