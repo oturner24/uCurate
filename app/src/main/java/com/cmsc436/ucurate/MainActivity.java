@@ -1,5 +1,9 @@
 package com.cmsc436.ucurate;
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +19,15 @@ import android.support.v4.app.Fragment;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,9 +47,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
-    private Stop stop;
+    private FusedLocationProviderClient mFusedLocationClient;
+
 
     private static final int RC_SIGN_IN = 123;
+    private static final int LOCATION_PERM = 1;
 
     private String userID;
 
@@ -50,14 +59,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (this == null) {
-            Log.i("TAG", "this is null");
-        } else {
-            //SupportMapFragment mapFragment =
-             //       (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
-            //mapFragment.getMapAsync(this);
-        }
-
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.mapView);
+        mapFragment.getMapAsync(this);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
@@ -135,6 +140,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+
+
 
     }
 
@@ -256,30 +263,43 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        //ask for location permissions if necessary
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERM);
+        } else {
+            moveToLastLoc();
+        }
+    }
 
-        //set marker at current location
-        LatLng loc = stop.getCoordinate();
-        mMap.addMarker(new MarkerOptions().position(loc).title(stop.getTitle())).setDraggable(true);
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-            @Override
-            public void onMarkerDragStart(Marker marker) {
-                //do nothing
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == LOCATION_PERM) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED && permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    moveToLastLoc();
+                }
             }
+        }
+    }
 
-            @Override
-            public void onMarkerDrag(Marker marker) {
-                //do nothing
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-                stop.setCoordinate(marker.getPosition());
-            }
-        });
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
-        // Zoom in, animating the camera.
-        mMap.animateCamera(CameraUpdateFactory.zoomIn());
-        // Zoom out to zoom level 10, animating with a duration of 2 seconds.
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+    //sets the stop's coordinates to the current location
+    private void moveToLastLoc() {
+        mFusedLocationClient.getLastLocation() //disregard this red line - asking for permissions earlier
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            LatLng mCoords = new LatLng(location.getLatitude(), location.getLongitude());
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mCoords, 50));
+                            // Zoom in, animating the camera.
+                            mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                            // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+                            mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+                        }
+                    }
+                });
     }
 }

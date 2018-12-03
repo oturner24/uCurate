@@ -99,7 +99,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/montserrat"
-        android:text="ADDRESS"
+        android:text="ADDRESS (if not entered, current location will be used)"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/des" />
 
