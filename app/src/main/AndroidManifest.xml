@@ -40,16 +40,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".AddPin"/>
+        <activity android:name=".AddPin" />
         <activity android:name=".DropPins" />
         <activity android:name=".TourListActivity" />
         <activity android:name=".TourInfoActivity" />
         <activity android:name=".TourActivity" />
         <activity
             android:name=".CreateTour"
-            android:label="@string/title_activity_create_tour">
-        </activity>
+            android:label="@string/title_activity_create_tour"></activity>
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".ProfileToursActivity"></activity>
     </application>
 
 </manifest>
