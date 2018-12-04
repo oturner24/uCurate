@@ -83,42 +83,43 @@ public class StopListAdapter extends RecyclerView.Adapter<StopListAdapter.MyView
         vh.mItemName.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                CheckedTextView item = ((CheckedTextView) view);
-                item.setChecked(!item.isChecked());
-                if (item.isChecked()) {
-                    item.setTextColor(Color.RED);
+                if (mMap != null) {
+                    CheckedTextView item = ((CheckedTextView) view);
+                    item.setChecked(!item.isChecked());
+                    if (item.isChecked()) {
+                        item.setTextColor(Color.RED);
 
-                    Stop stop = mDataset[vh.index];
-                    vh.mMarker = mMap.addMarker(new MarkerOptions().position(stop.getCoordinate()).title(stop.getTitle()));
-                    selected.add(vh.mMarker);
-                    selectedStops.add(mDataset[vh.index]);
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(stop.getCoordinate()));
-                } else {
-                    item.setTextColor(Color.BLACK);
-                    vh.mMarker.remove();
-                    selected.remove(vh.mMarker);
-                    selectedStops.remove(mDataset[vh.index]);
-                }
-                //move view to see all selected markers
-                if (selected.size() > 0) {
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    ArrayList<LatLng> latLngs = new ArrayList<>();
-                    for (Marker marker : selected) {
-                        builder.include(marker.getPosition());
-                        latLngs.add(marker.getPosition());
+                        Stop stop = mDataset[vh.index];
+                        vh.mMarker = mMap.addMarker(new MarkerOptions().position(stop.getCoordinate()).title(stop.getTitle()));
+                        selected.add(vh.mMarker);
+                        selectedStops.add(mDataset[vh.index]);
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLng(stop.getCoordinate()));
+                    } else {
+                        item.setTextColor(Color.BLACK);
+                        vh.mMarker.remove();
+                        selected.remove(vh.mMarker);
+                        selectedStops.remove(mDataset[vh.index]);
                     }
-                    LatLngBounds bounds = builder.build();
-                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
-                    mMap.animateCamera(cu);
+                    //move view to see all selected markers
+                    if (selected.size() > 0) {
+                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                        ArrayList<LatLng> latLngs = new ArrayList<>();
+                        for (Marker marker : selected) {
+                            builder.include(marker.getPosition());
+                            latLngs.add(marker.getPosition());
+                        }
+                        LatLngBounds bounds = builder.build();
+                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
+                        mMap.animateCamera(cu);
 
-                    //draw lines between markers
-                    for (Polyline p : lines) {
-                        p.remove();
+                        //draw lines between markers
+                        for (Polyline p : lines) {
+                            p.remove();
+                        }
+                        PolylineOptions line = new PolylineOptions().addAll(latLngs);
+                        lines.add(mMap.addPolyline(line));
                     }
-                    PolylineOptions line = new PolylineOptions().addAll(latLngs);
-                    lines.add(mMap.addPolyline(line));
                 }
-
             }
         });
 
@@ -155,7 +156,7 @@ public class StopListAdapter extends RecyclerView.Adapter<StopListAdapter.MyView
 
 
                 final PopupWindow popup = new PopupWindow(popupView, WRAP_CONTENT, WRAP_CONTENT, false);
-                popup.showAtLocation(mContext.findViewById(R.id.main_layout), Gravity.CENTER,0,0);
+                popup.showAtLocation(mContext.getCurrentFocus(), Gravity.CENTER,0,0);
 
                 popupView.findViewById(R.id.pin_ok).setOnClickListener(new View.OnClickListener() {
                     @Override
