@@ -33,7 +33,6 @@ public class TourListProfileAdapter extends RecyclerView.Adapter<TourListProfile
     private static String TAG = "TLA";
     private static final String TOUR = "TOUR";
     private Tour mTour;
-    private HashMap<String, String> mHash;
     private String userID;
     private String tourTitle;
     //private Tour[] tours;
@@ -51,9 +50,8 @@ public class TourListProfileAdapter extends RecyclerView.Adapter<TourListProfile
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public TourListProfileAdapter(String[] myDataset, HashMap hash, String userID) {
+    public TourListProfileAdapter(String[] myDataset, String userID) {
         mDataset = myDataset;
-        mHash = hash;
         this.userID = userID;
     }
 

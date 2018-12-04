@@ -130,13 +130,45 @@ public class ProfileToursActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         //TODO add database call
-        /*mAdapter = new TourListProfileAdapter(dataSet, tours, userID);
-        mRecyclerView.setAdapter(mAdapter);
 
-        if (mAdapter.getItemCount() == 0) {
-            Toast.makeText(getApplicationContext(), "No tours created.", Toast.LENGTH_LONG).show();
-        }
-*/
+
+        final ArrayList<Tour> tours = new ArrayList<Tour>();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DataSnapshot assocTours = dataSnapshot.child("users").child(userID).child("associatedTours");
+                DataSnapshot pinsSnapshot = dataSnapshot.child("pins");
+                for (DataSnapshot child : assocTours.getChildren()) {
+                    Tour temp = new Tour();
+                    String tourID = (String) child.getValue();
+                    DataSnapshot tourSnapshot = dataSnapshot.child("tours").child(tourID);
+                    DatabaseAccessor.createTourFromSnapshot(temp,tourSnapshot,pinsSnapshot);
+                    tours.add(temp);
+                }
+
+                String[] dataSet = new String[tours.size()];
+                for (int i = 0; i < tours.size(); i++){
+                    dataSet[i] = tours.get(i).getTitle();
+                }
+
+
+                mAdapter = new TourListProfileAdapter(dataSet, userID);
+                mRecyclerView.setAdapter(mAdapter);
+
+                if (mAdapter.getItemCount() == 0) {
+                    Toast.makeText(getApplicationContext(), "No tours created.", Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //not implemented
+            }
+        });
+
+
         Button pinList = findViewById(R.id.button25);
         pinList.setOnClickListener(new View.OnClickListener() {
             @Override
