@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-//setContentView(R.layout.activity_profile_tours);
 public class ProfileToursActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     RecyclerView.Adapter mAdapter;
@@ -125,36 +124,19 @@ public class ProfileToursActivity extends AppCompatActivity {
             }
         });
 
-        Button tourList = findViewById(R.id.button24);
-        tourList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mRecyclerView = (RecyclerView) findViewById(R.id.recycle_tours);
+        mRecyclerView = findViewById(R.id.recycle_tours);
 
-                // use this setting to improve performance if you know that changes
-                // in content do not change the layout size of the RecyclerView
-                mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
-                // use a linear layout manager
-                //mLayoutManager = new LinearLayoutManager(ProfileToursActivity.this);
-                //mRecyclerView.setLayoutManager(mLayoutManager);
+        //TODO add database call
+        /*mAdapter = new TourListProfileAdapter(dataSet, tours, userID);
+        mRecyclerView.setAdapter(mAdapter);
 
-                //TODO Change this to DB call
-
-
-                Tour[] tours = (Tour[]) getIntent().getParcelableArrayExtra(TOURS);
-                if (tours != null) {
-                    myDataset = getTourNames(tours);
-
-                    mAdapter = new TourListAdapter(myDataset, hash, userID);
-                    mRecyclerView.setAdapter(mAdapter);
-                } else {
-                    Toast.makeText(getApplicationContext(), "No tours made.", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
-
+        if (mAdapter.getItemCount() == 0) {
+            Toast.makeText(getApplicationContext(), "No tours created.", Toast.LENGTH_LONG).show();
+        }
+*/
         Button pinList = findViewById(R.id.button25);
         pinList.setOnClickListener(new View.OnClickListener() {
             @Override
