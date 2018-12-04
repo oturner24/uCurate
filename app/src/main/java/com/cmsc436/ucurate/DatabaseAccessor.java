@@ -86,6 +86,7 @@ public class DatabaseAccessor {
         newTour.child("title").setValue(tour.getTitle());
         newTour.child("description").setValue(tour.getDescription());
         newTour.child("numStops").setValue(tour.getNumStops());
+        newTour.child("distance").setValue(tour.getDistance());
 
         for (Stop stop : tour.getStops()){
             newTour.child("tourPins").push().setValue(stop.getID());
@@ -102,8 +103,18 @@ public class DatabaseAccessor {
         Stop stop = empty;
         stop.setTitle((String) pinSnapshot.child("title").getValue());
         stop.setDescription((String) pinSnapshot.child("description").getValue());
-        double lat = ((Number) pinSnapshot.child("latitude").getValue()).doubleValue();
-        double lng = ((Number) pinSnapshot.child("longitude").getValue()).doubleValue();
+        double lat;
+        double lng;
+        if (pinSnapshot.child("latitude").getValue() != null) {
+            lat = ((Number) pinSnapshot.child("latitude").getValue()).doubleValue();
+        } else {
+            lat = 0;
+        }
+        if (pinSnapshot.child("longitude").getValue() != null) {
+            lng = ((Number) pinSnapshot.child("longitude").getValue()).doubleValue();
+        } else {
+            lng = 0;
+        }
 
         stop.setCoordinate(new LatLng(lat,lng));
         //stop.setImage((Bitmap) pinSnapshot.child("image").getValue());
@@ -131,7 +142,13 @@ public class DatabaseAccessor {
         Tour tour = empty;
         tour.setTitle((String) tourSnapshot.child("title").getValue());
         tour.setDescription((String) tourSnapshot.child("description").getValue());
-        tour.setNumStops(((Number) tourSnapshot.child("numStops").getValue()).intValue());
+        if (tourSnapshot.child("numStops").getValue() != null) {
+            tour.setNumStops(((Number) tourSnapshot.child("numStops").getValue()).intValue());
+        }
+        if (tourSnapshot.child("distance").getValue() != null){
+            tour.setDistance(((Number) tourSnapshot.child("distance").getValue()).doubleValue());
+        }
+
 
 
         ArrayList<Stop> stops = new ArrayList<Stop>();
