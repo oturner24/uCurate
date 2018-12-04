@@ -129,8 +129,6 @@ public class ProfileToursActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        //TODO add database call
-
 
         final ArrayList<Tour> tours = new ArrayList<Tour>();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -169,7 +167,7 @@ public class ProfileToursActivity extends AppCompatActivity {
         });
 
 
-        Button pinList = findViewById(R.id.button25);
+        Button pinList = findViewById(R.id.button24);
         pinList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
