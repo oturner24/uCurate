@@ -14,7 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /*This is an adapter for TourListActivity. This class includes the onClickListener that starts
@@ -30,7 +36,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
     private HashMap<String, String> mHash;
     private String userID;
     private String tourTitle;
-    private Tour[] tours;
+    //private Tour[] tours;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -54,7 +60,7 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
     public TourListAdapter(String[] myDataset, Tour[] tours, String userID) {
         mDataset = myDataset;
         //mHash = hash;
-        this.tours = tours;
+        //this.tours = tours;
         this.userID = userID;
     }
 
@@ -119,17 +125,40 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
                 mTour.setStops(stops);
                 */
 
-                for(int i = 0; i < tours.length; i++){
-                    if(tours[i].getTitle().equals(tourTitle)){
-                        mTour = tours[i];
-                    }
-                }
+                final ArrayList<Tour> tours = new ArrayList<Tour>();
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        DataSnapshot toursSnapshot = dataSnapshot.child("tours");
+                        DataSnapshot pinsSnapshot = dataSnapshot.child("pins");
+                        for (DataSnapshot tourSnapshot: toursSnapshot.getChildren()){
+                            Tour temp = new Tour();
+                            DatabaseAccessor.createTourFromSnapshot(temp, tourSnapshot, pinsSnapshot);
+                            tours.add(temp);
+                        }
 
-                Log.d(TAG,"I've been clicked");
-                Intent intent = new Intent(mContext, TourInfoActivity.class);
-                intent.putExtra("userID",userID);
-                intent.putExtra(TOUR, mTour);
-                mContext.startActivity(intent);
+                        for(Tour tour : tours){
+                            if(tour.getTitle().equals(tourTitle)){
+                                mTour = tour;
+                            }
+                        }
+
+                        Log.d(TAG,"I've been clicked");
+                        Intent intent = new Intent(mContext, TourInfoActivity.class);
+                        intent.putExtra("userID",userID);
+                        intent.putExtra(TOUR, mTour);
+                        mContext.startActivity(intent);
+
+
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //not implemented
+                    }
+                });
+
             }
         });
         MyViewHolder vh = new MyViewHolder(v);

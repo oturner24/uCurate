@@ -54,9 +54,6 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
         String num_stopsStr = String.valueOf(stops.length) + " stops";
         String distanceStr = String.format("%.2f miles", mTour.getDistance());
 
-
-
-
         TextView title = findViewById(R.id.tour_name);
         title.setText(tourTitle);
 
@@ -70,7 +67,7 @@ public class TourInfoActivity extends AppCompatActivity implements OnMapReadyCal
         dist.setText(distanceStr);
 
         //was image_recycler?
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.image_recycler);
 
         mAdapter = new TourInfoImageAdapter(getApplicationContext(), stops);
         mRecyclerView.setAdapter(mAdapter);
