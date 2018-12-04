@@ -29,6 +29,8 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
     private Tour mTour;
     private HashMap<String, String> mHash;
     private String userID;
+    private String tourTitle;
+    private Tour[] tours;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -49,6 +51,13 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
         this.userID = userID;
     }
 
+    public TourListAdapter(String[] myDataset, Tour[] tours, String userID) {
+        mDataset = myDataset;
+        //mHash = hash;
+        this.tours = tours;
+        this.userID = userID;
+    }
+
     // Create new views (invoked by the layout manager)
     @Override
     public TourListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -64,6 +73,8 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
             @Override
             public void onClick(View view){
                 TextView textView = view.findViewById(R.id.tour);
+                tourTitle = (String) textView.getText();
+
                 // Display a Toast message indicting the selected item
                 //Toast.makeText(mContext, textView.getText(), Toast.LENGTH_SHORT).show();
 
@@ -107,6 +118,12 @@ public class TourListAdapter extends RecyclerView.Adapter<TourListAdapter.MyView
 
                 mTour.setStops(stops);
                 */
+
+                for(int i = 0; i < tours.length; i++){
+                    if(tours[i].getTitle().equals(tourTitle)){
+                        mTour = tours[i];
+                    }
+                }
 
                 Log.d(TAG,"I've been clicked");
                 Intent intent = new Intent(mContext, TourInfoActivity.class);
