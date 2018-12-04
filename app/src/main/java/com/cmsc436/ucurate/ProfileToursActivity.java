@@ -58,9 +58,29 @@ public class ProfileToursActivity extends AppCompatActivity {
         launchProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent3 = new Intent(ProfileToursActivity.this, ProfileActivity.class);
-                intent3.putExtra("userID",userID);
-                startActivity(intent3);
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        DataSnapshot assocPins = dataSnapshot.child("users").child(userID).child("associatedPins");
+                        ArrayList<Stop> stops = new ArrayList<Stop>();
+                        for (DataSnapshot child : assocPins.getChildren()) {
+                            Stop temp = new Stop();
+                            String pinID = (String) child.getValue();
+                            DataSnapshot pinSnapshot = dataSnapshot.child("pins").child(pinID);
+                            DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
+                            stops.add(temp);
+                        }
+                        Intent intent3 = new Intent(ProfileToursActivity.this, ProfileActivity.class);
+                        intent3.putExtra("userID", userID);
+                        intent3.putExtra("myPins",stops.toArray(new Stop[0]));
+                        startActivity(intent3);
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //not implemented
+                    }
+                });
 
             }
         });
@@ -139,9 +159,29 @@ public class ProfileToursActivity extends AppCompatActivity {
         pinList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent4 = new Intent(ProfileToursActivity.this, ProfileActivity.class);
-                intent4.putExtra("userID",userID);
-                startActivity(intent4);
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        DataSnapshot assocPins = dataSnapshot.child("users").child(userID).child("associatedPins");
+                        ArrayList<Stop> stops = new ArrayList<Stop>();
+                        for (DataSnapshot child : assocPins.getChildren()) {
+                            Stop temp = new Stop();
+                            String pinID = (String) child.getValue();
+                            DataSnapshot pinSnapshot = dataSnapshot.child("pins").child(pinID);
+                            DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
+                            stops.add(temp);
+                        }
+                        Intent intent3 = new Intent(ProfileToursActivity.this, ProfileActivity.class);
+                        intent3.putExtra("userID", userID);
+                        intent3.putExtra("myPins",stops.toArray(new Stop[0]));
+                        startActivity(intent3);
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //not implemented
+                    }
+                });
             }
         });
     }

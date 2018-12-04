@@ -133,10 +133,11 @@ public class DatabaseAccessor {
         tour.setDescription((String) tourSnapshot.child("description").getValue());
         tour.setNumStops(((Number) tourSnapshot.child("numStops").getValue()).intValue());
 
+
         ArrayList<Stop> stops = new ArrayList<Stop>();
-        for (DataSnapshot snapshot : pinsSnapshot.getChildren()){
+        for (DataSnapshot snapshot : tourSnapshot.child("tourPins").getChildren()){
             Stop temp = new Stop();
-            createPinFromSnapshot(temp, snapshot);
+            createPinFromSnapshot(temp, pinsSnapshot.child((String) snapshot.getValue()));
             stops.add(temp);
         }
         tour.setStops(stops.toArray(new Stop[0]));

@@ -1,6 +1,7 @@
 package com.cmsc436.ucurate;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     RecyclerView.Adapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
-    private Stop[] myDataset;
+    private Stop[] myPins;
     private static final String STOPS = "STOPS";
     private String userID;
 
@@ -34,6 +35,16 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         userID = getIntent().getStringExtra("userID");
+        //Bundle bundle = getIntent().getExtras();
+        //myPins = bundle.getParcelable("myPins");
+        Parcelable[] parcels = getIntent().getParcelableArrayExtra("myPins");
+        ArrayList<Stop> tempStops = new ArrayList<>();
+
+        for (Parcelable p : parcels){
+            tempStops.add((Stop) p);
+        }
+
+        myPins = tempStops.toArray(new Stop[0]);
 
         Button launchAddPin = findViewById(R.id.button10);
         launchAddPin.setOnClickListener(new View.OnClickListener() {
@@ -50,10 +61,29 @@ public class ProfileActivity extends AppCompatActivity {
         launchProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent3 = new Intent(ProfileActivity.this, ProfileActivity.class);
-                intent3.putExtra("userID",userID);
-                startActivity(intent3);
-
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        DataSnapshot assocPins = dataSnapshot.child("users").child(userID).child("associatedPins");
+                        ArrayList<Stop> stops = new ArrayList<Stop>();
+                        for (DataSnapshot child : assocPins.getChildren()) {
+                            Stop temp = new Stop();
+                            String pinID = (String) child.getValue();
+                            DataSnapshot pinSnapshot = dataSnapshot.child("pins").child(pinID);
+                            DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
+                            stops.add(temp);
+                        }
+                        Intent intent3 = new Intent(ProfileActivity.this, ProfileActivity.class);
+                        intent3.putExtra("userID", userID);
+                        intent3.putExtra("myPins",stops.toArray(new Stop[0]));
+                        startActivity(intent3);
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //not implemented
+                    }
+                });
             }
         });
 
@@ -113,34 +143,15 @@ public class ProfileActivity extends AppCompatActivity {
 
 
                 //First set an empty adapter
-                mAdapter = new StopListAdapter(ProfileActivity.this, new Stop[0]);
-                mRecyclerView.setAdapter(mAdapter);
+                //mAdapter = new StopListAdapter(ProfileActivity.this, new Stop[0]);
+                //mRecyclerView.setAdapter(mAdapter);
 
-                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                mDatabase.child("pins").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        ArrayList<Stop> stops = new ArrayList<Stop>();
-                        for (DataSnapshot pinSnapshot : dataSnapshot.getChildren()){
-                            Stop temp = new Stop();
-                            DatabaseAccessor.createPinFromSnapshot(temp, pinSnapshot);
-                            stops.add(temp);
-                        }
-
-                        if (stops.size() > 0) {
-                            mAdapter = new StopListAdapter(ProfileActivity.this, stops.toArray(new Stop[0]));
-                            mRecyclerView.setAdapter(mAdapter);
-                        } else {
-                            Toast.makeText(getApplicationContext(), "No pins dropped.", Toast.LENGTH_LONG).show();
-                        }
-
-
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //not implemented
-                    }
-                });
+                if (myPins.length  > 0) {
+                    mAdapter = new StopListAdapter(ProfileActivity.this, myPins);
+                    mRecyclerView.setAdapter(mAdapter);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No pins dropped.", Toast.LENGTH_LONG).show();
+                }
 
             }
         });
