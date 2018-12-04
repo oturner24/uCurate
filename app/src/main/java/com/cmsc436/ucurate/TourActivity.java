@@ -1,6 +1,7 @@
 package com.cmsc436.ucurate;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -38,11 +39,15 @@ import android.widget.TextView;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 
 public class TourActivity extends AppCompatActivity implements OnMapReadyCallback{
@@ -180,16 +185,33 @@ public class TourActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Marker currMarker = markers[curr];
                 if (marker.equals(currMarker)){
                     Log.d(TAG,"right marker");
-                    Bitmap img1 = stops[curr].getImage();
                     /*
                     Bitmap preimg = BitmapFactory.decodeResource(getApplicationContext().getResources(),
                             R.drawable.img1);
                     Bitmap img1 = scaleDownBitmap(preimg);
                     */
 
-                    Drawable img = new BitmapDrawable(getResources(), img1);
-                    imagePopup.initiatePopup(img);
-                    imagePopup.viewPopup();
+                    FirebaseStorage mStorage = FirebaseStorage.getInstance();
+                    StorageReference storageRef = mStorage.getReference().child(stops[curr].getID());
+
+                    final long MAX = 1024 * 1024 * 1024;
+                    storageRef.getBytes(MAX).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            // Data for "images/island.jpg" is returns, use this as needed
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            Drawable img = new BitmapDrawable(getResources(), bitmap);
+                            imagePopup.initiatePopup(img);
+                            imagePopup.viewPopup();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
+
+                    //Bitmap img1 = stops[curr].getImage();
 
                 }
 

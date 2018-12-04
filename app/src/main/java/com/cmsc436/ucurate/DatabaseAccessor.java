@@ -5,19 +5,27 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class DatabaseAccessor {
     private static DatabaseReference mDatabase;
+    private static FirebaseStorage mStorage;
 
     public DatabaseAccessor(){
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mStorage = FirebaseStorage.getInstance();
         //Log.i("database", "This is the database key:" + mDatabase.getKey());
     }
 
@@ -25,13 +33,6 @@ public class DatabaseAccessor {
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                /*
-                for (DataSnapshot child : dataSnapshot.child("users").getChildren()){
-                    if (child.hasChild(userID))
-                        return;
-                }
-                */
                 if (!dataSnapshot.child("users").hasChild(userID)) {
                     mDatabase.child("users").child(userID).child("email").setValue(email);
                 }
@@ -52,12 +53,32 @@ public class DatabaseAccessor {
         newPin.child("latitude").setValue(stop.getCoordinate().latitude);
         newPin.child("longitude").setValue(stop.getCoordinate().longitude);
         newPin.child("owner").setValue(UserID);
-        newPin.child("image").setValue(stop.getImage());
+        //newPin.child("image").setValue(stop.getImage());
 
         mDatabase.child("users").child(UserID).child("associatedPins").push().setValue(newPin.getKey());
 
         Log.i("database", ("Inserted new pin with ID: " + newPin.getKey()));
         stop.setID(newPin.getKey());
+
+        StorageReference storageRef = mStorage.getReference().child(newPin.getKey());
+        Bitmap bitmap = stop.getImage();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = storageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+            }
+        });
+
     }
 
     public void insertTour(Tour tour, String UserID){
@@ -85,7 +106,8 @@ public class DatabaseAccessor {
         double lng = ((Number) pinSnapshot.child("longitude").getValue()).doubleValue();
 
         stop.setCoordinate(new LatLng(lat,lng));
-        stop.setImage((Bitmap) pinSnapshot.child("image").getValue());
+        //stop.setImage((Bitmap) pinSnapshot.child("image").getValue());
+        Log.i("database", ("Recreated pin with ID: " + pinSnapshot.getKey()));
         stop.setID(pinSnapshot.getKey());
     }
 

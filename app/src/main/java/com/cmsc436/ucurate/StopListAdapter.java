@@ -1,7 +1,12 @@
 package com.cmsc436.ucurate;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,6 +29,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -116,13 +125,34 @@ public class StopListAdapter extends RecyclerView.Adapter<StopListAdapter.MyView
         vh.mInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View popupView = mContext.getLayoutInflater().inflate(R.layout.pin_info_popup, null);
+                final View popupView = mContext.getLayoutInflater().inflate(R.layout.pin_info_popup, null);
                 popupView.setBackgroundColor(Color.WHITE);
 
                 Stop currPin = mDataset[vh.index];
                 ((TextView) popupView.findViewById(R.id.pin_name)).setText(currPin.getTitle());
                 ((TextView) popupView.findViewById(R.id.pin_des)).setText(currPin.getDescription());
-                ((ImageView) popupView.findViewById(R.id.pin_img)).setImageBitmap(currPin.getImage());
+
+                FirebaseStorage mStorage = FirebaseStorage.getInstance();
+                StorageReference storageRef = mStorage.getReference().child(currPin.getID());
+
+                final long MAX = 1024 * 1024 * 1024;
+                storageRef.getBytes(MAX).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        // Data for "images/island.jpg" is returns, use this as needed
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        ((ImageView) popupView.findViewById(R.id.pin_img)).setImageBitmap(bitmap);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle any errors
+                    }
+                });
+
+
+
+
 
                 final PopupWindow popup = new PopupWindow(popupView, WRAP_CONTENT, WRAP_CONTENT, false);
                 popup.showAtLocation(mContext.findViewById(R.id.main_layout), Gravity.CENTER,0,0);

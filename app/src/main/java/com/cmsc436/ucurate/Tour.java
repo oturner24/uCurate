@@ -56,6 +56,7 @@ public class Tour implements Parcelable{
 
 
     public Tour(Parcel in){
+        this.ID = in.readString();
         this.title = in.readString();
         this.description = in.readString();
         this.numStops = in.readInt();
@@ -70,11 +71,12 @@ public class Tour implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.ID);
         dest.writeString(this.title);
-       dest.writeString(this.description);
-       dest.writeInt(this.numStops);
+        dest.writeString(this.description);
+        dest.writeInt(this.numStops);
         dest.writeDouble(this.distance);
-       dest.writeTypedArray(this.stops,0);
+        dest.writeTypedArray(this.stops,0);
 
     }
 

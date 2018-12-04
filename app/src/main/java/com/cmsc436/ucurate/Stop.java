@@ -71,6 +71,7 @@ public class Stop implements Parcelable {
 
     // "De-parcel object
     public Stop(Parcel in) {
+        this.ID = in.readString();
         this.title = in.readString();
         this.description = in.readString();
         Bundle b = in.readBundle(getClass().getClassLoader());
@@ -85,6 +86,7 @@ public class Stop implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.ID);
         dest.writeString(this.title);
         dest.writeString(this.description);
         Bundle b = new Bundle();
