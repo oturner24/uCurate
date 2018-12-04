@@ -127,34 +127,17 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        Button pinList = findViewById(R.id.button7);
-        pinList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mRecyclerView = (RecyclerView) findViewById(R.id.recycle_pins);
+        mRecyclerView = findViewById(R.id.recycle_pins);
 
-                // use this setting to improve performance if you know that changes
-                // in content do not change the layout size of the RecyclerView
-                mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
-                // use a linear layout manager
-                //mLayoutManager = new LinearLayoutManager(ProfileActivity.this);
-                //mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new StopListAdapter(ProfileActivity.this, myPins);
+        mRecyclerView.setAdapter(mAdapter);
 
-
-                //First set an empty adapter
-                //mAdapter = new StopListAdapter(ProfileActivity.this, new Stop[0]);
-                //mRecyclerView.setAdapter(mAdapter);
-
-                if (myPins.length  > 0) {
-                    mAdapter = new StopListAdapter(ProfileActivity.this, myPins);
-                    mRecyclerView.setAdapter(mAdapter);
-                } else {
-                    Toast.makeText(getApplicationContext(), "No pins dropped.", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
+        if (myPins.length == 0) {
+            Toast.makeText(getApplicationContext(), "No pins dropped.", Toast.LENGTH_LONG).show();
+        }
 
         Button tourList = findViewById(R.id.button8);
         tourList.setOnClickListener(new View.OnClickListener() {
